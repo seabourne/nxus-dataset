@@ -53,7 +53,7 @@ export default class DataSets {
     this.admin.adminRoute('post', 'datasets/:id/data/save', this.saveDataUpload.bind(this)) //workaround - url is different for post
 
     this.admin.replace().adminRoute('get', 'datasets/:id/remove',  this.removeDataRowsForSet.bind(this)) //intercept admin-ui default dataset delete 
-    this.admin.replace().adminRoute('get', 'datasets/:id/edit', this.editDataSet.bind(this))
+    // this.admin.replace().adminRoute('get', 'datasets/:id/edit', this.editDataSet.bind(this))
     
     this.loader.uploadPath('/admin/datasets/:id/data/save', 'csvfile')
   }
