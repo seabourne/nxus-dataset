@@ -1,0 +1,23 @@
+<table class="table table-stripped" id='dataSetTable'>
+  <thead>
+   <tr>
+    <% fields.forEach((field) => { %>
+        <th><%- morph.toTitle(field.name) %></th>
+    <% }) %>
+  </tr>
+  </thead>
+  <tbody>
+    <% rows.forEach((row) => { %>
+      <tr>
+        <% fields.forEach((field) => { %>
+          <td><%= row[field.name] %></td>
+        <% }) %>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<script>
+  $(document).ready(function(){
+    $('#dataSetTable').DataTable();
+});
+</script>
