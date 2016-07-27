@@ -1,16 +1,20 @@
 <table class="table table-stripped" id='dataSetTable'>
   <thead>
    <tr>
-    <% fields.forEach((field) => { %>
-        <th><%- morph.toTitle(field.name) %></th>
+    <% fields.forEach((field) => { 
+      var fldName = (field.name ? field.name : field)
+    %>
+        <th><%- morph.toTitle(fldName) %></th>
     <% }) %>
   </tr>
   </thead>
   <tbody>
     <% rows.forEach((row) => { %>
       <tr>
-        <% fields.forEach((field) => { %>
-          <td><%= row[field.name] %></td>
+        <% fields.forEach((field) => { 
+          var fldName = (field.name ? field.name : field)
+        %>
+          <td><%= row[fldName] %></td>
         <% }) %>
       </tr>
     <% }) %>
