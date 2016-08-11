@@ -12,9 +12,9 @@
     <% rows.forEach((row) => { %>
       <tr>
         <% fields.forEach((field) => { 
-          var fldName = (field.name ? field.name : field)
+          var dataKey = (field.id ? field.id : field)
         %>
-          <td><%= row[fldName] %></td>
+          <td><%= row[dataKey] %></td>
         <% }) %>
       </tr>
     <% }) %>

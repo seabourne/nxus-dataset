@@ -9,6 +9,7 @@
 
 import DataSet from './models/DataSet'
 import DataRow from './models/DataRow'
+import DataPresentation from './models/DataPresentation'
 import * as mconst from './models/modelConstants'
 
 import morph from 'morph'
@@ -28,6 +29,7 @@ export default class DataSets {
 
     this.storage.model(DataSet)
     this.storage.model(DataRow)
+    this.storage.model(DataPresentation)
 
     this.templater.templateDir(__dirname+"/../views")
     this.templater.replace().templateFunction("view-dataset-detail", (opts) => {
@@ -42,6 +44,11 @@ export default class DataSets {
     this.admin.adminModel('dataset', {
       display: ['name', 'source', 'description'],
       iconClass: 'fa fa-list'
+    })
+
+    this.admin.adminModel('datapresentation', {
+      display: ['name', 'label', 'fieldIds'],
+      iconClass: 'fa fa-table'
     })
 
     this.admin.instanceAction('dataset', 'Upload Data', 'data', {iconClass: 'fa fa-upload'})
@@ -90,7 +97,7 @@ export default class DataSets {
     let opts = {
       id: req.params.id
     }
-    this.app.log.debug("View() dataset id  ", req.params.id)
+    this.app.log.debug("nxus-dataset View() dataset id  ", req.params.id)
     return this.storage.getModel(['dataset', 'datarow']).spread((Set, Row) => {
       return [Set.findOne(req.params.id), Row.find({dataset: req.params.id})]
     }).spread((set, rows) => {
@@ -103,13 +110,16 @@ export default class DataSets {
   }
 
   /**
-   * clean up the datarow after storage,
-   * associating with the given dataset ID.
+   * Transform the datarow after storage,
+   * associating with the given dataset ID
+   * and re-writing the properties from the imported column-names
+   * to use unique field ID's supplied in the field info array.
    * @param  {[datarow]} row       DataRow instance to put under given DataSet ID
-   * @param  {[type]} dataSetId [description]
+   * @param  {[string]} dataSetId   Parent ID
+   * @param { array of field info} [fieldInfoList] Objects containing the original column heading keys and the unique field id's
    * @return the original row passed in, with some property modifications.
    */
-  _prepareDataRowInDataSet(row, dataSetId) {
+  _prepareDataRowInDataSet(row, dataSetId, fieldInfoList) {
     _.each(row, (val,key) => {
       if (typeof(val) == 'string') {
         if (val.endsWith('%')) {
@@ -121,36 +131,47 @@ export default class DataSets {
       } else if (typeof(val) == 'undefined') {
         val = null
       }
-      row[key] = val
+      let field = _.findWhere(fieldInfoList, {name: key})
+      if (field) {
+        row[field.id] = val
+        delete row[key]
+      } else {
+        row[key] = val
+      }
     })
     row.dataset = dataSetId
-    //nb: important to return changed row rather than new object
+    //nb: must return changed row rather than new object
     return row
   }
 
   /**
-   * put in a data type for each field in uploaded datarow
+   * Based on supplied data row, build array of field info objects
+   * which include a unique field-id for each property on the row.
    * @param  {[datarow]} sample [representative row of data]
-   * @return {[object]}        [map by datarow key of best estimate for the type]
+   * @return { array of object}        [name, id, and type properties for each field]
    */
-  _buildIntialDataTypes(sample) {
-    let typeMap = {}
-    _.each(sample, (val,key) => {
+  _buildFieldInfo(sample) {
+    let fields = new Array()
+    _.each(_.keys(sample), (key,index) => {
+      let type = mconst.STRING_TYPE
+      let val = sample[key]
       if (typeof(val) == 'string') {
         if (val.endsWith('%')) {
-          typeMap[key] = mconst.PERCENT_TYPE
+          type = mconst.PERCENT_TYPE
         } else if (! isNaN(parseFloat(val))) {
-          typeMap[key] = mconst.DECIMAL_TYPE
-        } else {
-          typeMap[key] = mconst.STRING_TYPE
+          type = mconst.DECIMAL_TYPE
         }
       }
-      if ( typeMap[key] != mconst.PERCENT_TYPE && 
+      if ( type != mconst.PERCENT_TYPE && 
         ((-1 < key.toLowerCase().indexOf('percent')) || (-1 < key.indexOf('%'))) ) {
-        typeMap[key] = mconst.PERCENT_TYPE
+        type = mconst.PERCENT_TYPE
+      }
+      if (! _.contains(["true", "id", "dataset"], key)) {
+        let genId = this._generateUniqueId()
+        fields.push({ name: key, id: genId, label: morph.toTitle(key), type: type, primaryKey: false, visible: true })
       }
     })
-    return typeMap
+    return fields
   }
 
   /**
@@ -168,19 +189,17 @@ export default class DataSets {
     }
     return this.loader.importFileToModel('datarow', req.file.path, {type: 'csv', strict: false})
     .then((rows) => {
-      let inferredTypeMap = {}
       let currentFields = []
       _.each(rows, (rowElem) => {
         // this.app.log.debug("saveDataUpload processing rowElem", rowElem)
         if (Array.isArray(rowElem)) {
           rowElem = rowElem[0] //work-around for model handler dupe bug in data-loader 3.0.0
         }
-        if (_.isEmpty(inferredTypeMap)) {
-          inferredTypeMap = this._buildIntialDataTypes(rowElem)
-          currentFields = _.keys(rowElem)
+        if (_.isEmpty(currentFields)) {
+          currentFields = this._buildFieldInfo(rowElem)
         }
         if (setId) {
-          let rowToUpdate = this._prepareDataRowInDataSet(rowElem, setId)
+          let rowToUpdate = this._prepareDataRowInDataSet(rowElem, setId, currentFields)
           rowToUpdate.save().catch((err) => {
             this.app.log.error("nxus-dataset update failed for datarow " + rowElem.id, err)
           })
@@ -189,15 +208,11 @@ export default class DataSets {
       return this.storage.getModel('dataset').then((DataSet) => {
         return DataSet.findOne(setId)
       }).then((set) => {
-        let fieldList = _.map(_.without(currentFields, 'id', 'dataset', 'true'), (columnName) => {
-          let genId = this._generateUniqueId()
-          let newField = { name: columnName, id: genId, label: morph.toTitle(columnName)}
-          if (inferredTypeMap[columnName]) newField.type = inferredTypeMap[columnName]
-          return newField
-        })
+        //warn about limitation of current implementation if set already has rows.
+        if ( 0 < set.rowCount ) this.app.log.error("Adding additional rows to a dataset isn't supported")
         set.rowCount = rows.length
-        set.fields = fieldList
-        this.app.log.debug( "nxus-dataset saveDataUpload dataset " + setId + " fields:", fieldList )
+        set.fields = currentFields
+        this.app.log.debug( "nxus-dataset saveDataUpload dataset " + setId + " fields:", currentFields )
         return set.save().then( () => {
           req.flash('info', "Successfully loaded " + rows.length + " data rows")
           res.redirect('/admin/datasets')
