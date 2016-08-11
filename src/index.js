@@ -170,8 +170,8 @@ export default class DataSets {
     .then((rows) => {
       let inferredTypeMap = {}
       let currentFields = []
-      _.each(rows, (rowElem) => {
-        // this.app.log.debug("saveDataUpload processing rowElem", rowElem)
+      _.each(rows, (rowElem, index) => {
+        // this.app.log.debug("saveDataUpload " + index + " processing rowElem", rowElem)
         if (Array.isArray(rowElem)) {
           rowElem = rowElem[0] //work-around for model handler dupe bug in data-loader 3.0.0
         }
@@ -189,9 +189,9 @@ export default class DataSets {
       return this.storage.getModel('dataset').then((DataSet) => {
         return DataSet.findOne(setId)
       }).then((set) => {
-        let fieldList = _.map(_.without(currentFields, 'id', 'dataset', 'true'), (columnName) => {
+        let fieldList = _.map(_.without(currentFields, 'id', 'dataset', 'true', 'createdAt', 'updatedAt'), (columnName) => {
           let genId = this._generateUniqueId()
-          let newField = { name: columnName, id: genId, label: morph.toTitle(columnName)}
+          let newField = { name: columnName, id: genId, label: morph.toTitle(columnName), primaryKey: false, visible: true}
           if (inferredTypeMap[columnName]) newField.type = inferredTypeMap[columnName]
           return newField
         })
