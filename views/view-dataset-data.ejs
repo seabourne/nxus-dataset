@@ -1,3 +1,12 @@
+<!-- detail page for dataset shows all datarow elements -->
+<div class="row">
+  <div class="col-md-2">Description:</div>
+  <div class="col-md-8"><p><%= set.description %></p></div>
+</div>
+<div class="row">
+  <div class="col-md-2">Source:</div>
+    <div class="col-md-8"><p><%= set.source %> </p></div>
+</div>
 <table class="table table-stripped" id='dataSetTable'>
   <thead>
    <tr>
@@ -12,7 +21,7 @@
     <% rows.forEach((row) => { %>
       <tr>
         <% fields.forEach((field) => { 
-          var dataKey = (field.id ? field.id : field)
+          var dataKey = (field.name ? field.name : field)
         %>
           <td><%= row[dataKey] %></td>
         <% }) %>
