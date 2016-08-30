@@ -61,6 +61,9 @@ export default class DataSets {
     this.admin.adminRoute('post', 'datasets/:id/dataset/save', this.saveDataSet.bind(this)) //update dataset, from custom form (see views/admin-dataset-form)
     this.admin.adminRoute('post', 'datasets/dataset/save', this.saveDataSet.bind(this)) //new dataset, from custom form (see views/admin-dataset-form)
 
+    this.admin.replace().adminRoute('get', 'datapresentations/:id/edit', this.editDataPresentation.bind(this))
+    this.admin.adminRoute('post', 'datapresentations/selector-save', this.saveDataPresentation.bind(this))
+
     this.admin.replace().adminRoute('get', 'datasets/:id/remove',  this.removeDataRowsForSet.bind(this)) //intercept admin-ui default dataset delete 
     
     this.loader.uploadPath('/admin/datasets/:id/data/save', 'csvfile')
@@ -98,8 +101,8 @@ export default class DataSets {
       id: req.params.id
     }
     this.app.log.debug("nxus-dataset View() dataset id  ", req.params.id)
-    return this.storage.getModel(['dataset', 'datarow']).spread((Set, Row) => {
-      return [dataSetModel.findOne(req.params.id), Row.find({dataset: req.params.id})]
+    return this.storage.getModel(['dataset', 'datarow']).spread((dataSetModel, dataRowModel) => {
+      return [dataSetModel.findOne(req.params.id), dataRowModel.find({dataset: req.params.id})]
     }).spread((set, rows) => {
       opts.morph = morph
       opts.rows = rows
@@ -253,7 +256,7 @@ export default class DataSets {
     this.app.log.debug("saveDataSet id: ", dataSetId)
     if (dataSetId) {
       
-      this.storage.getModel('dataset').then((dsmodel) => {
+      this.storage.getModel( 'dataset').then((dsmodel) => {
         return dsmodel.findOne(dataSetId)
       }).then((dataset) => {
         dataset.name = req.body.name
@@ -294,9 +297,76 @@ export default class DataSets {
           return res.redirect('/admin/datasets/create')
         }
       })
+    }
   }
-}
 
+  /**
+   * replace the admin handler for editing, 
+   * or creating, a DataPresentation.
+   * Adding additional objects to make the association
+   * with DataSet.fields easier to manage.
+   * @param  {[type]} req [description]
+   * @return {[type]}     [description]
+   */
+  editDataPresentation(req, res) {
+    let presentId = req.params.id
+    this.app.log.debug("edit datapresentation id: ", presentId)
+    if (!presentId) {
+      presentId = 0
+    }
+    this.storage.getModel(['datapresentation', 'dataset'])
+      .spread( (dataPresentModel, dataSetModel) => {
+        return( [dataPresentModel.findOne(presentId), dataSetModel.find({})] )
+    }).spread ( (presentation, datasets) => {
+      let opts = {
+        datapresentation: presentation,
+        datasets: datasets,
+        template: 'page'
+      };
+      return this.templater.render('admin-datapresentation-form-with-selector', opts)
+      .then((contents) => { res.send(contents) })
+    })
+  }
+
+  /**
+   * Save changed (not new) DataPresentation.
+   * Handles the POST from custom admin-datapresentation-form
+   * @param  {[type]} req [description]
+   * @param  {[type]} res [description]
+   * @return {[type]}     [description]
+   */
+  saveDataPresentation(req, res) {
+    let presentId = req.body.id
+    this.storage.getModel('datapresentation').then( (dataPresentModel) => {
+      return dataPresentModel.findOne(presentId)
+    }).then( (dataPresentation) => {
+      dataPresentation.name = req.body.name
+      dataPresentation.label = req.body.label
+      if (Array.isArray(req.body.fieldIds)) {
+        //clean out any submitted empty strings
+        let cleanFieldsArr = req.body.fieldIds.filter( (elem) => { return elem })
+        dataPresentation.fieldIds =  cleanFieldsArr
+      } else if ( req.body.fieldIds ) {
+        dataPresentation.fieldIds = [req.body.fieldIds]
+      } else {
+        dataPresentation.fieldIds = []
+      }
+      return dataPresentation.save()
+    }).then( () => {
+      if (req.body.save == "add") {
+        return res.redirect( '/admin/datapresentations/' + presentId + '/edit')
+      } else {
+        return res.redirect( '/admin/datapresentations')
+      }
+    }).catch( (err) => {
+      req.flash('error', 'Problem saving your changes', err)
+      this.app.log.error( "nxus-dataset: unable to save datapresentation ", err.stack)
+      return res.redirect( '/admin/datapresentations')
+    })
+    
+  }
+    
+    
  _generateUniqueId() {
   //maybe overkill for use in cases here,
   // but it's unique across launches of the app

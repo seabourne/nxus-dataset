@@ -1,0 +1,66 @@
+<!-- admin-datapresentation-form-with-selector
+-->
+
+  <div class="row">
+  <form action="/admin/datapresentations/selector-save" method="POST" class="form-horizontal" >
+    <input type="hidden" name="id" value="<%- datapresentation.id %>"/>
+    <div class="form-body">
+      <div class="form-group">
+        <label for="datapresentation.name" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="name" id="datapresentation.name" required value="<%- datapresentation.name %>" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="datapresentation.label" class="col-sm-2 control-label">Label</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="label" id="datapresentation.label" value="<%- datapresentation.label %>" />
+        </div>
+      </div>
+      
+      <% datapresentation.fieldIds.forEach( (fieldId, index) => { %>
+      <div class="form-group">
+        <label for="datapresentation.field_<%= index %>" class="col-sm-2 control-label">Field</label>
+        <div class="col-sm-10">
+        <select name="fieldIds" id="datapresentation.field_<%= index %>" class="form-control" >
+          <option value="" > --delete-- </option>
+          <% datasets.forEach( (dataset) => { 
+              dataset.fields.forEach ( (field) => {  
+                if (field && field.id) { %>
+
+          <option value="<%= field.id %>" <%= (fieldId == field.id ? "selected" : "" ) %>><%= dataset.name + ": " + field.name %></option>
+          <% 
+              }
+            })
+          }) 
+          %>
+
+        </select>
+        </div>
+      </div>
+      <%  }) %>
+        <div class="form-group">
+          <label for="datapresentation.addfield" class="col-sm-2 control-label">
+            <button class="btn btn-primary btn-sm" type="submit" id="datapresentation.addfield" name="save" value="add">Add Field:</button>
+          </label>
+          <div class="col-sm-10">
+          <select name="fieldIds" id="datapresentation.addfield" class="form-control" >
+            <option value="" > --select-- </option>
+            <% datasets.forEach( (dataset) => { 
+                dataset.fields.forEach ( (field) => {  
+                  if (field && field.id) { %>
+            <option value="<%= field.id %>" ><%= dataset.name + ": " + field.name %></option>
+            <% 
+                }
+              })
+            }) %>
+          </select>
+          </div>
+      </div>
+    </div>
+    <hr class="dotted">
+    <div class="col-sm-offset-1 col-sm-7">
+      <button class="btn btn-primary" name="save" type="submit">Save</button> 
+    </div>
+  </form>
+  </div>

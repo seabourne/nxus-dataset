@@ -15,43 +15,58 @@ var DataPresentation = BaseModel.extend({
     //data preparation helper
     extractFieldData: (datasets, datarows) => {
       let myInstanceObj = this.toObject();
-      return DataPresentation.extractUsingFieldIds(myInstanceObj.fieldIds, datasets, datarows)
+      return DataPresentation.extractUsingFieldIds(myInstanceObj, datasets, datarows)
     }
   }
 });
 
-DataPresentation.extractUsingFieldIds = (fieldIds, datasets, datarows) => {
-    let presentationDataArray = [];
-      _.each(fieldIds, (fieldId) => {
-        let presentationData = {}
-        let dataset = _.find(datasets, (set) => { 
-          return _.findWhere(set.fields, {id:fieldId})
-        })
-        if (dataset) {
-          console.log("dataset ", dataset, " for presentation field id ", fieldId)
-          let valueField = _.findWhere(dataset.fields, {id:fieldId})
-          if (valueField) {
-            let primaryKeyField = _.findWhere(dataset.fields, {primaryKey: true})
-            presentationData.field = valueField
-            presentationData.data = {}
-            let matchedRows = _.filter(datarows, (row) => {
-              return _.has(row, valueField.name)
-            })
-            _.each(matchedRows, (row, index) => {
-              if (primaryKeyField) {
-                presentationData.data[matchedRows[primaryKeyField.name]] = matchedRows[valueField.name]
-              } else {
-                presentationData.data[index] = matchedRows[valueField.name]
-              }
-              presentationDataArray.push(presentationData)
-            })
-          } else {
-            //do something here?
-          }
-        }
-
-      })
-      return presentationDataArray
+/**
+ * Extract data relevant to the DataPresentation from collections of DataSet's and DataRow's.
+ * Creates a filtered view object, with summary data about the presentation and all matching DataRows trimmed to just the fields needed.
+ * @param  {[DataPresentation]} presentation 
+ * @param  {[collection of DataSet]} datasets     DataSets that span the field-id's in the supplied presentation. Can be a super-set.
+ * @param  {[collection of DataRow]} datarows     [description]
+ * @return {[Object]}    with properties:
+ *   name - name of the presentation;
+ *   id - ID of the presentation;
+ *   label - label of the presentation;
+ *   fields - array of matching fields extracted from DataSet(s);
+ *   data - array of DataRow records, holding just the identified fields and any primary key fields.
+ */
+DataPresentation.extractUsingFieldIds = (presentation, datasets, datarows) => {
+  let presentationData = { 
+    name: presentation.name, 
+    id: presentation.id, 
+    label: presentation.label, 
+    fields: [], 
+    data: []
   }
+  presentation.fieldIds.forEach( (fieldId) => {
+    let targetField = {}
+    let dataset = datasets.find((set) => { 
+      targetField = _.findWhere(set.fields, {id:fieldId})
+      return targetField
+    })
+    if (targetField && targetField.name) {
+        let primaryKeyFields = _.where(dataset.fields, {primaryKey: true})
+        presentationData.fields.push(targetField)
+        datarows.forEach( (row, index) => {
+          if (dataset.id == row.dataset && _.has(row, targetField.name)) {
+            let pRow = {}
+            pRow[targetField.name] = row[targetField.name]
+            pRow.fieldId = targetField.id
+            if (primaryKeyFields) {
+              primaryKeyFields.forEach( (keyField) => {
+                pRow[keyField.name] = row[keyField.name]
+              })
+            }
+            presentationData.data.push(pRow)
+          }
+
+        })
+    }
+  })
+  return presentationData
+}
 
 module.exports = DataPresentation;
