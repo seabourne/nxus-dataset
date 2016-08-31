@@ -1,6 +1,6 @@
 {
   "name": "nxus-dataset",
-  "version": "3.0.1-3",
+  "version": "3.0.1-4",
   "description": "DataSet-DataRow data module ",
   "main": "lib",
   "scripts": {
