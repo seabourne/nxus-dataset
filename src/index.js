@@ -1,9 +1,31 @@
-/*
-* @Author: mike
-* @Date:   2016-05-14 09:23:14
-* @Last Modified 2016-06-08
-* @Last Modified time: 2016-06-08 08:02:01
-*/
+/**
+ *  # Usage
+ *  -------
+ *  
+ * An abstraction of "Spreadsheet-like" data for use in nxus applications,
+ * along with a way to create a named collection of said spreadsheet columns for use in various visualizations on a website.
+ *
+ * Uses nxus-storage and nxus-loader as interfaces to load and store data from a _DataSet_ model, which in turn holds zero or more _DataRow_ objects.
+ * A _DataRow_ is essentially schema-less, with a structure defined by the data which is loaded in.
+ * A _DataPresentation_ is a collection of fields from _DataSets_ that have been created and have had _DataRows_ uploaded.
+ *
+ * This module provides _DataSet_ and _DataPresentation_ links on the default Admin screen for managing these data types.
+ * 
+ *
+ * # API
+ * -------
+ *
+ * Applications have access via nxus-storage to the models, by refrerencing their identities:
+ *    'dataset'
+ *    'datarow'
+ *    'datapresentation'
+ *
+ * The _DataPresentation_ model has a static method
+ * extractUsingFieldIds()
+ * which can be used to take a collection of DataSets and DataRows and filter just the data which applies to a supplied DataPresentation instance.
+ * The instance method 
+ * extractFieldData() on _DataPresentation_ provides the same function for the current instance.
+ */
 
 'use strict';
 
