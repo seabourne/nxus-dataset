@@ -206,7 +206,8 @@ export default class DataSets {
     return this.loader.importFileToModel('datarow', req.file.path, {type: 'csv', strict: false})
     .then((rows) => {
       let currentFields = []
-      _.each(rows, (rowElem) => {
+      _.each(rows, (rowElem, index) => {
+        // this.app.log.debug("saveDataUpload " + index + " processing rowElem", rowElem)
         if (Array.isArray(rowElem)) {
           rowElem = rowElem[0] //work-around for model handler dupe bug in data-loader 3.0.0
         }

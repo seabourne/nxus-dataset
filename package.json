@@ -1,6 +1,6 @@
 {
   "name": "nxus-dataset",
-  "version": "3.0.0",
+  "version": "3.0.1-1",
   "description": "DataSet-DataRow data module ",
   "main": "lib",
   "scripts": {
@@ -38,7 +38,8 @@
   },
   "peerDependencies": {
     "nxus-core": "^3.0.0-0",
-    "nxus-storage": "^3.0.0-0"
+    "nxus-storage": "^3.0.0-0",
+    "nxus-data-loader": "^3.0.0-1"
   },
   "devDependencies": {
     "mocha": "^2.2.5",
