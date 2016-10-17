@@ -1,0 +1,117 @@
+<!-- custom datasets-dataset-form.ejs -->
+<form role="form" action="" method="POST" class="form-horizontal form-bordered" id="validateForm">
+    <input type="hidden" id="id" name="<%= idField %>" value="<%= object[idField] %>" />
+    <div class="form-body">
+      <% attributes.forEach(function(attr) { %>
+        <% if(typeof attr.type != 'undefined') { %>
+            <% attr.value = object[attr.name] %>
+            <%- render("web-form-input-"+attr.type, attr) %>
+        <% } %>
+      <% }) %>
+
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-7">
+            <button class="btn btn-theme" type="submit">Save</button>        
+        </div>
+    </div>
+
+    <div class="form-body">
+      <%
+      if (object.fields) {
+      %>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-offset-1 col-md-11">
+            <h3>Fields</h3>
+          </div>
+        </div>
+        <% 
+        var k = 0;
+        object.fields.forEach( (field) => { 
+        %>
+        <div class="row">
+          <div class="col-sm-offset-1 col-md-7">
+            <div class="row">
+              <div class="col-md-6">
+                <b>Field Name:</b> <%- field.name %>
+                <b>id:</b> <%- field.id %>
+              </div>
+            </div>
+
+        <%
+          _.each(field, (value, key) => {
+            if ( 'id' != key && 'name' != key ) {
+        %>
+            <div class="form-group-row">
+              <div class="col-md-7">
+                  <label for="object.field[<%- k %>].<%- key %>" class="col-md-2 col-form-label  to-right"><%- key %></label>
+                  <div class="col-md-5">
+
+        <%        if ('primaryKey' == key) {
+                    var rchecked = ( value=="true" ? "checked='checked'" : "" )
+        %>
+                    <input type="radio" class="form-check-input" name="field_primaryKey" id="object.field[<%- k %>].<%- key %>" value="<%- field.id %>" <%= rchecked %> />
+        <%        } else if ('visible' == key) {
+                    var bchecked = ( value=="true" ? "checked='checked'" : "" )
+        %>
+                    <input type="checkbox" class="form-check-input" name="field_<%- field.id %>_<%- key %>" id="object.field[<%- k %>].<%- key %>" value="true" <%= bchecked %> />
+        <%        } else if ('type' == key) {
+        %>
+                    <select name="field_<%- field.id %>_<%- key %>" class="form-control"  id="object.field[<%- k %>].<%- key %>">
+                      <option value="percent">percent</option>
+                      <option value="decimal">decimal</option>
+                      <option value="string">string</option>
+                    </select>
+        <%        } else {
+        %>
+                    <input type="text" class="form-control" name="field_<%- field.id %>_<%- key %>" id="object.field[<%- k %>].<%- key %>" value="<%- value %>" />
+        <%        }
+        %>
+                  </div>
+              </div>
+              
+            </div>
+          <% 
+            }
+          }) 
+          k++; 
+          %>
+
+         </div>
+          <div class="col-md-4">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Sample Data for <%- field.name %></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+            <%  var sampleRows = _.first(_.pluck(datarows, field.name),5)
+                var j = 1;
+                sampleRows.forEach( (sample) => {
+            %>    
+                        <tr>
+                          <th scope="row"><%= j %></th>
+                          <td><%- sample %></td>
+                        </tr>
+    
+
+            <%   })
+            %>
+                  </tbody>
+                </table>
+            </div>
+          </div>
+        <% }) %>        
+
+
+        <div class="col-sm-offset-3 col-sm-7">
+            <button class="btn btn-theme" type="submit">Save</button>        
+        </div>
+      </div>
+      <% } //if fields %>
+    </div>
+
+</form>
