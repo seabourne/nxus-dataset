@@ -7,7 +7,7 @@ import {dataManager} from 'nxus-data-manager'
 import _ from 'underscore'
 import {Promise} from 'bluebird'
 
-import * as FieldUtil from '../../fieldUtils'
+import * as FieldUtil from '../fieldUtils'
 
 /**
  * Set up admin pages to 
