@@ -1,0 +1,37 @@
+<!-- non-admin detail page for dataset shows all field.isVisible datarow elements -->
+<div class="row">
+  <div class="col-md-12"><p><b>Name:</b>&nbsp;<%= object.name %> </p></div>
+</div>
+<div class="row">
+  <div class="col-md-12"><p><b>Description:</b>&nbsp;<%= object.description %> </p></div>
+</div>
+<div class="row">
+  <div class="col-md-12"><p><b>Source:</b>&nbsp;<%= object.source %> </p></div>
+</div>
+<table class="table table-stripped" id='dataSetTable'>
+  <thead>
+   <tr>
+    <% fields.forEach((field) => { 
+        if (field.isVisible) {
+         var fldName = (field.label ? field.label : morph.toTitle(field.name))
+    %>
+        <th><%= fldName %></th>
+    <% 
+        }
+      }) 
+    %>
+  </tr>
+  </thead>
+  <tbody>
+    <% rows.forEach((row) => { %>
+      <tr>
+      <% fields.forEach((field) => { 
+          if (field.isVisible) {
+      %>
+          <td><%= row[field.name] %></td>
+    <%    } 
+      }) %>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

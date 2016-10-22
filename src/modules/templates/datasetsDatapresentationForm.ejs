@@ -1,4 +1,4 @@
-<!-- custom datasets-datapresentation-form.ejs -->
+<!-- custom datasetsDatapresentationForm.ejs -->
 <form role="form" action="" method="POST" class="form-horizontal form-bordered" id="validateForm">
     <input type="hidden" id="id" name="<%= idField %>" value="<%= object[idField] %>" />
     <div class="form-body">
@@ -22,7 +22,6 @@
                     var j = 1;
                     datasets.forEach( (dataset) => {
                         dataset.fields.forEach( (field) => {
-                            console.log( "comparing ", field.id, " in ", object.fieldIds)
                             let selected = ( _.contains(object.fieldIds, field.id) ? "selected" : "" )
 
             %>

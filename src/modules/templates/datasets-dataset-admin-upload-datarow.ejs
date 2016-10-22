@@ -1,5 +1,15 @@
 <!-- datasets-dataset-admin-upload-datarow -->
 <div>
+  <div class="row">
+  <% if (dataset.fields) {
+  %>
+    <h3>Replace data for <%= dataset.name %></h3>
+  <% } else {
+  %>
+    <h3>Upload data for <%= dataset.name %></h3>
+  <% }
+  %>
+  </div>
   <form action="<%- id %>/save" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="parentId" value="<%- id %>"/>
     <div class="row">
