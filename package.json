@@ -33,6 +33,7 @@
     "morph": "^0.2.0",
     "node-uuid": "^1.4.7",
     "nxus-admin": "^4.0.0-2",
+    "nxus-data-manager": "^4.0.0-1",
     "nxus-router": "^4.0.0-1",
     "nxus-storage": "^4.0.0-2",
     "nxus-templater": "^4.0.0-1",
