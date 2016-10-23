@@ -52,13 +52,12 @@ export default class DataSetAdmin extends AdminController {
       this.log.debug( "editing dataset id:  ", instance.id)
       return [this.models['datasets-datarow'].find({dataset: instance.id}), editContext]
     }).spread( (datarows, context) => {
-      this.log.debug( "find returned matched datarows:  ", datarows)
+      // this.log.debug( "find returned matched datarows:  ", datarows)
       let retObj = {
         datarows: datarows,
         fieldTypes: FieldUtil.FIELD_TYPES,
         ...context
       }
-      this.log.debug( "returning enhanced edit context:  ", retObj)
       return retObj
     })
   }
@@ -110,7 +109,7 @@ export default class DataSetAdmin extends AdminController {
     }).then((rows) => {
       let currentFields = []
       _.each(rows, (rowElem, index) => {
-        this.log.debug("saveDataUpload " + index + " processing rowElem", rowElem)
+        // this.log.debug("saveDataUpload " + index + " processing rowElem", rowElem)
         if (Array.isArray(rowElem)) {
           rowElem = rowElem[0] //work-around for model handler dupe bug in data-loader 3.0.0 (do we need this in 4.0??)
         }
@@ -218,6 +217,7 @@ export default class DataSetAdmin extends AdminController {
       }
     }).catch( (err) => {
       req.flash('error', 'Unable to create or edit: ' + err.message)
+      this.log.error('Dataset save failed on  ' + dataSetId, err)
       return res.redirect(this.routePrefix)
     })
   }
@@ -233,11 +233,10 @@ export default class DataSetAdmin extends AdminController {
       this.log.debug("remove datasets-dataset deleted ", rowsRemoved.length, " data rows from dataset ", dataSetId); 
       req.flash('info', "Successfully removed "+rowsRemoved.length+" data rows")
       return this.model.destroy({id: dataSetId}).then( (dsRemoved) => {
-        this.log.debug("removed DataSet ", dataSetId); 
         res.redirect(this.routePrefix)
       })
     }).catch((e) => {
-      this.log.debug( "nxus-dataset error removing data rows from dataset " + dataSetId, e);
+      this.log.error( "nxus-dataset error removing data rows from dataset " + dataSetId, e);
       req.flash('error', "Error removing dataset " + e.message)
       res.redirect(this.routePrefix)
     })
