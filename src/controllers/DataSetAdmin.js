@@ -98,7 +98,7 @@ export default class DataSetAdmin extends AdminController {
    */
   _uploadDataRowSave(req, res) {
     let setId = req.param('id')
-    this.log.debug( "_uploadDataRowSave setId ", setId)
+    this.log.debug("_uploadDataRowSave setId ", setId)
     return Promise.resolve().then( () => {
       if(!req.file) {
         throw new Error('No upload file was supplied for the data')
