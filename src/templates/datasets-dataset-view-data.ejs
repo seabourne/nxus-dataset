@@ -11,7 +11,8 @@
 <table class="table table-stripped" id='dataSetTable'>
   <thead>
    <tr>
-    <% dataset.fields.forEach((field) => { 
+    <% if (dataset.fields) {
+         dataset.fields.forEach((field) => { 
     %>
         <th><%= field.name %></th>
     <% 
@@ -28,6 +29,8 @@
     <% 
       }) %>
       </tr>
-    <% }) %>
+    <% }) 
+      }
+    %>
   </tbody>
 </table>

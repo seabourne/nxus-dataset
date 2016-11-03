@@ -56,11 +56,19 @@ export default class DataPresentationAdmin extends AdminController {
    */
   save(req, res) {
     let presentId = req.params.id || null
-    this.log.debug('save presentation id: ', presentId)
-    this.model.createOrUpdate({id: presentId}, { 
+    let updatedObj = { 
       name: req.body.name, 
       label: req.body.label, 
-      fieldIds: req.body.fieldIds} ).then( () => {
+      fieldIds: req.body.fieldIds
+    }
+    this.log.debug('save presentation id: ', presentId)
+    return Promise.resolve().then( () => {
+      if (presentId) {
+        return this.model.update({id: presentId}, updatedObj)
+      } else {
+        return this.model.create(updatedObj)
+      }
+    }).then( () => {
         return res.redirect(this.routePrefix)
     }).catch((err) => {
       this.log.error('datapresentation save error, id: ', presentId, ' at: ', err.stack);

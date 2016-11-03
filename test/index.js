@@ -3,14 +3,13 @@
  */
 'use strict';
 
-import TestApp from 'nxus-core/lib/test/support/TestApp';
-import DataPresentation from '../src/models/DataPresentation'
 import assert from 'assert'
+import DataSets from '../src/index'
 
 describe( "Data Methods", () => {
-  var app;
+  var dataSets;
   beforeEach( () => {
-    app = new TestApp();
+    dataSets = new DataSets()
   })
 
   describe("DataPresentation", () => {
@@ -28,7 +27,7 @@ describe( "Data Methods", () => {
         name: 'test', id: '888', label: 'testing', 
         fieldIds:['103', '105']
       }
-      let checkData = DataPresentation.extractUsingFieldIds(testPresentation, 
+      let checkData = dataSets.extractDataForPresentation(testPresentation, 
         testSets, 
         testRows)
       console.log( "check: ", checkData)
@@ -52,7 +51,7 @@ describe( "Data Methods", () => {
         name: 'test2', id: '888', label: 'testing2', 
         fieldIds:[ '104']
       }
-      let checkData = DataPresentation.extractUsingFieldIds(testPresentation, 
+      let checkData = dataSets.extractDataForPresentation(testPresentation, 
         testSets, 
         testRows)
       console.log( "check2: ", checkData)
