@@ -1,5 +1,5 @@
-//fieldConstants.js
 'use strict';
+
 import _ from 'underscore'
 import nodeUUID from 'node-uuid'
 import morph from 'morph'
