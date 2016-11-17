@@ -42,6 +42,7 @@ export class FieldBuilder {
       ((-1 < name.toLowerCase().indexOf('percent')) || (-1 < name.indexOf('%'))) ) {
       type = PERCENT_TYPE
     }
+    return type
   }
   /**
    * Based on supplied data row, build array of field info objects

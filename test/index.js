@@ -20,7 +20,7 @@ describe( "Data Methods", () => {
       let checkData = utilsUnderTest.extractDataForPresentation(NO_PRIMARY_KEY_TEST_DATA.testPresentation, 
         NO_PRIMARY_KEY_TEST_DATA.testSets, 
         NO_PRIMARY_KEY_TEST_DATA.testRows)
-      //console.log( "check: ", checkData)
+      // console.log( "no PK check: ", checkData)
       //expect 2 rows back: 103:3.1 and 105:2.6
       assert.equal(checkData.data.length, 2)
       //nb in future order may not be same as input datarows order?
@@ -34,7 +34,7 @@ describe( "Data Methods", () => {
       let checkData = utilsUnderTest.extractDataForPresentation(TEST_DATA_WITH_PRIMARY_KEY.testPresentation, 
         TEST_DATA_WITH_PRIMARY_KEY.testSets, 
         TEST_DATA_WITH_PRIMARY_KEY.testRows)
-      //console.log( "check2: ", checkData)
+      console.log( "PK check: ", checkData)
       assert.ok(checkData.fields['1001'], 'PK field info is added to result fields')
       //expect 2 rows back
       assert.equal(checkData.data.length, 2)
@@ -58,13 +58,24 @@ describe( "Data Methods", () => {
       assert.equal(indexedTestData.data['998']['104'], 2.6, 'found expected inner value for PK 998')
       done()
     })
+    it("data-presentation formatted by field label, single PK field", (done) => {
+      let presentData = utilsUnderTest.extractDataForPresentation(TEST_DATA_WITH_PRIMARY_KEY.testPresentation, 
+        TEST_DATA_WITH_PRIMARY_KEY.testSets, 
+        TEST_DATA_WITH_PRIMARY_KEY.testRows)
+      let formattedData = utilsUnderTest.formatDataWithFieldLabel(presentData)
+      // console.log( "formatted by name data with 1 PK: ", formattedData)
+      assert.equal(formattedData.data.length, 2)
+      assert.ok(formattedData.data[0]['pk1'], 'found expected field-label key in data object for PK')
+      assert.ok(formattedData.data[0]['thatsit'], 'found expected presentation field-label in data object')
+      done()
+    })
   })
 });
 
 const TEST_DATA_WITH_PRIMARY_KEY = {
   testSets: [ 
-    {name: "test1", id: 123, fields: [ {name: 'pk1', id: '1001', isPrimaryKey: true}, {name: 'that', id: '104'}, {name: 'miss', id: '103'}]},
-    {name: "test2", id: 124, fields: [ {name: 'pk2', id: '1002', isPrimaryKey: true}, {name: 'another', id: '105'} ]}
+    {name: "test1", id: 123, fields: [ {name: 'pk1', label: 'pk1', id: '1001', isPrimaryKey: true}, {name: 'that', label: 'thatsit', id: '104'}, {name: 'miss', label: 'miss', id: '103'}]},
+    {name: "test2", id: 124, fields: [ {name: 'pk2', label: 'pk1', id: '1002', isPrimaryKey: true}, {name: 'another', label: 'another', id: '105'} ]}
   ],
   testRows: [
     {pk1: 999, that: 3.2, id:1, dataset: 123},
