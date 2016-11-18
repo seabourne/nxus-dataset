@@ -1,9 +1,7 @@
-'use strict';
-
 import {BaseModel} from 'nxus-storage'
 
-module.exports = BaseModel.extend({
-  identity: 'dataset',
+export default BaseModel.extend({
+  identity: 'datasets-dataset',
   attributes: {
     name: 'string',
     fields: 'json',
@@ -11,4 +9,4 @@ module.exports = BaseModel.extend({
     description: 'text',
     rowCount: 'integer'
   }
-});
+})

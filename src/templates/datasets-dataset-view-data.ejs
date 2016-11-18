@@ -1,0 +1,36 @@
+<!-- admin page to view the associated datarows for a dataset -->
+<div class="row">
+  <div class="col-md-12"><p><b>Name:</b>&nbsp;<%= dataset.name %> </p></div>
+</div>
+<div class="row">
+  <div class="col-md-12"><p><b>Description:</b>&nbsp;<%= dataset.description %> </p></div>
+</div>
+<div class="row">
+  <div class="col-md-12"><p><b>Source:</b>&nbsp;<%= dataset.source %> </p></div>
+</div>
+<table class="table table-stripped" id='dataSetTable'>
+  <thead>
+   <tr>
+    <% if (dataset.fields) {
+         dataset.fields.forEach((field) => { 
+    %>
+        <th><%= field.name %></th>
+    <% 
+      }) 
+    %>
+  </tr>
+  </thead>
+  <tbody>
+    <% datarows.forEach((row) => { %>
+      <tr>
+      <% dataset.fields.forEach((field) => { 
+      %>
+          <td><%= row[field.name] %></td>
+    <% 
+      }) %>
+      </tr>
+    <% }) 
+      }
+    %>
+  </tbody>
+</table>

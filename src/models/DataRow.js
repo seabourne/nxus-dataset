@@ -1,10 +1,9 @@
-'use strict';
 
 import {BaseModel} from 'nxus-storage'
 
 module.exports = BaseModel.extend({
-  identity: 'datarow',
+  identity: 'datasets-datarow',
   dataset: {
-    model: 'dataset'
+    model: 'datasets-dataset'
   }
 });

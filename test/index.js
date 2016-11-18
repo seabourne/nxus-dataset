@@ -3,65 +3,103 @@
  */
 'use strict';
 
-import TestApp from 'nxus-core/lib/test/support/TestApp';
-import DataPresentation from '../src/models/DataPresentation'
 import assert from 'assert'
+import _ from 'underscore'
+
+import DataPresentationUtil from '../src/DataPresentationUtil'
 
 describe( "Data Methods", () => {
-  var app;
+  var utilsUnderTest;
   beforeEach( () => {
-    app = new TestApp();
+    utilsUnderTest = new DataPresentationUtil()
   })
 
   describe("DataPresentation", () => {
     it("data-presentation extract; dataset and datarow without PK", (done) => {
-      let testSets = [ 
-        {name: "test1", id: 123, fields: [ {name: 'hit', id: '103'}, {name: 'miss', id: '104'} ]},
-        {name: "test2", id: 456, fields: [ {name: 'hit', id: '106'}, {name: 'miss', id: '105'} ]}
-      ];
-      let testRows = [
-        {hit: 3.1, miss: 3.2, id:1, dataset: 123},
-        {hit: 3.5, miss: 2.6, id:2, dataset: 456},
-        {flack1: 0.7, flack2: 0.6, id: 3, dataset: 123}
-      ];
-      let testPresentation = {
-        name: 'test', id: '888', label: 'testing', 
-        fieldIds:['103', '105']
-      }
-      let checkData = DataPresentation.extractUsingFieldIds(testPresentation, 
-        testSets, 
-        testRows)
-      console.log( "check: ", checkData)
-      //expect 2 rows back: hit:3.1 and miss:2.6
-      assert.equal( checkData.data.length, 2)
-      assert.equal( checkData.data[0].hit, 3.1)
-      assert.equal( checkData.data[0].fieldId, '103')
-      assert.equal( checkData.data[1].miss, 2.6)
+      
+      let checkData = utilsUnderTest.extractDataForPresentation(NO_PRIMARY_KEY_TEST_DATA.testPresentation, 
+        NO_PRIMARY_KEY_TEST_DATA.testSets, 
+        NO_PRIMARY_KEY_TEST_DATA.testRows)
+      // console.log( "no PK check: ", checkData)
+      //expect 2 rows back: 103:3.1 and 105:2.6
+      assert.equal(checkData.data.length, 2)
+      //nb in future order may not be same as input datarows order?
+      assert.equal(checkData.data[0]['103'], 3.1)
+      assert.equal(checkData.data[1]['105'], 2.6)
+      assert.ok(checkData.fields['103'], 'Expected 103 indexed field found OK')
+      assert.ok(checkData.fields['105'], 'Expected 105 indexed field found OK')
       done()
     })
-  it("data-presentation extract with PK field", (done) => {
-      let testSets = [ 
-        {name: "test1", id: 123, fields: [ {name: 'pk', id: '1001', primaryKey: true}, {name: 'that', id: '104'} ]},
-      ];
-      let testRows = [
-        {pk: 999, miss: 3.2, id:1, dataset: 123},
-        {pk: 998, that: 2.6, id:2, dataset: 123},
-        {pk: 997, flack1: 1.7, flack2: 1.6, id: 3, dataset: 123}
-      ];
-      let testPresentation = {
-        name: 'test2', id: '888', label: 'testing2', 
-        fieldIds:[ '104']
-      }
-      let checkData = DataPresentation.extractUsingFieldIds(testPresentation, 
-        testSets, 
-        testRows)
-      console.log( "check2: ", checkData)
-      //expect 1 rows back
-      assert.equal( checkData.data.length, 1)
-      assert.equal( checkData.data[0].pk, 998)
-      assert.equal( checkData.data[0].fieldId, '104')
-      assert.equal( checkData.data[0].that, 2.6)
+    it("data-presentation extract with PK field", (done) => {
+      let checkData = utilsUnderTest.extractDataForPresentation(TEST_DATA_WITH_PRIMARY_KEY.testPresentation, 
+        TEST_DATA_WITH_PRIMARY_KEY.testSets, 
+        TEST_DATA_WITH_PRIMARY_KEY.testRows)
+      console.log( "PK check: ", checkData)
+      assert.ok(checkData.fields['1001'], 'PK field info is added to result fields')
+      //expect 2 rows back
+      assert.equal(checkData.data.length, 2)
+      assert.equal(checkData.data[0]['1001'], 999, 'PK field is passed into result 0')
+      assert.equal(checkData.data[0]['104'], 3.2, 'Got expected field value in result 0')
+      assert.equal(checkData.data[1]['1001'], 998, 'PK field is passed into result 1')
+      assert.equal(checkData.data[1]['104'], 2.6, 'Got expected field value in result 1')
+      done()
+    })
+    it("data-presentation index by single PK field", (done) => {
+      let presentData = utilsUnderTest.extractDataForPresentation(TEST_DATA_WITH_PRIMARY_KEY.testPresentation, 
+        TEST_DATA_WITH_PRIMARY_KEY.testSets, 
+        TEST_DATA_WITH_PRIMARY_KEY.testRows)
+      let indexedTestData = utilsUnderTest.indexDataIntoObjectByPrimaryKeyValue(presentData)
+      //console.log( "indexed data with 1 PK: ", indexedTestData)
+      assert.equal(_.keys(indexedTestData.data).length, 2)
+      assert.ok(indexedTestData.data['999'], 'found expected index in data for PK=999')
+      assert.ok(indexedTestData.data['998'], 'found expected index in data for PK=998')
+      assert.ok(! indexedTestData.data['997'], 'did NOT find index in data for PK=997')
+      assert.equal(indexedTestData.data['999']['104'], 3.2, 'found expected inner value for PK 999')
+      assert.equal(indexedTestData.data['998']['104'], 2.6, 'found expected inner value for PK 998')
+      done()
+    })
+    it("data-presentation formatted by field label, single PK field", (done) => {
+      let presentData = utilsUnderTest.extractDataForPresentation(TEST_DATA_WITH_PRIMARY_KEY.testPresentation, 
+        TEST_DATA_WITH_PRIMARY_KEY.testSets, 
+        TEST_DATA_WITH_PRIMARY_KEY.testRows)
+      let formattedData = utilsUnderTest.formatDataWithFieldLabel(presentData)
+      // console.log( "formatted by name data with 1 PK: ", formattedData)
+      assert.equal(formattedData.data.length, 2)
+      assert.ok(formattedData.data[0]['pk1'], 'found expected field-label key in data object for PK')
+      assert.ok(formattedData.data[0]['thatsit'], 'found expected presentation field-label in data object')
       done()
     })
   })
 });
+
+const TEST_DATA_WITH_PRIMARY_KEY = {
+  testSets: [ 
+    {name: "test1", id: 123, fields: [ {name: 'pk1', label: 'pk1', id: '1001', isPrimaryKey: true}, {name: 'that', label: 'thatsit', id: '104'}, {name: 'miss', label: 'miss', id: '103'}]},
+    {name: "test2", id: 124, fields: [ {name: 'pk2', label: 'pk1', id: '1002', isPrimaryKey: true}, {name: 'another', label: 'another', id: '105'} ]}
+  ],
+  testRows: [
+    {pk1: 999, that: 3.2, id:1, dataset: 123},
+    {pk1: 998, that: 2.6, id:2, dataset: 123},
+    {pk2: 997, another: 1.7, id: 3, dataset: 124},
+  ],
+  testPresentation: {
+    name: 'test2', id: '888', label: 'testing2', 
+    fieldIds:[ '104']
+  }
+}
+
+const NO_PRIMARY_KEY_TEST_DATA = {
+  testSets: [ 
+    {name: "test1", id: 123, fields: [ {name: 'hit', id: '103'}, {name: 'miss', id: '104'} ]},
+    {name: "test2", id: 456, fields: [ {name: 'hit', id: '106'}, {name: 'miss', id: '105'} ]}
+  ],
+  testRows: [
+    {hit: 3.1, miss: 3.2, id:1, dataset: 123},
+    {hit: 3.5, miss: 2.6, id:2, dataset: 456},
+    {flack1: 0.7, flack2: 0.6, id: 3, dataset: 123},
+  ],
+  testPresentation: {
+    name: 'test', id: '888', label: 'testing', 
+    fieldIds:['103', '105']
+  }
+}
