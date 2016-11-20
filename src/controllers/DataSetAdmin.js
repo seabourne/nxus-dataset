@@ -79,6 +79,7 @@ export default class DataSetAdmin extends AdminController {
    */
   _uploadDataRow(req, res) {
     let setId = req.param('id')
+    this.log.debug( "uploadDataRow id ", setId)
     return this.model.findOne(setId).then((dataset) => {
       let opts = {
         id: setId,
@@ -172,7 +173,7 @@ export default class DataSetAdmin extends AdminController {
    */
   save(req, res) {
     let dataSetId = req.params.id
-    this.log.debug("save DataSet id: ", dataSetId)
+    this.log.debug("save for DataSet id: ", dataSetId)
     return Promise.resolve().then( () => {
       if (!dataSetId) {
         if (!req.body.name) {
@@ -185,7 +186,7 @@ export default class DataSetAdmin extends AdminController {
           })
         }
       } else {
-        this.model.findOne(dataSetId)
+        return this.model.findOne(dataSetId)
         .then((dataset) => {
           dataset.name = req.body.name
           dataset.source = req.body.source
@@ -210,6 +211,7 @@ export default class DataSetAdmin extends AdminController {
           })
           return dataset
         }).then( (dataset) => {
+          this.log.debug("save DataSet : " + dataset.name)
           return dataset.save()
         }).then( () => {
           return res.redirect(this.routePrefix)

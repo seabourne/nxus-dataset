@@ -79,18 +79,18 @@ class DataSets extends MVCModule {
 
   _buildRowQuery(datasets, keyValues) {
     let rowQuery = {dataset: _.pluck(datasets, 'id')}
-      if (keyValues || (Array.isArray(keyValues) && 0 < keyValues.length)) {
-        delete rowQuery.dataset
-        rowQuery.or = []
-        datasets.forEach( (ds) => {
-          let orClause = {'dataset': ds.id}
-          _.each(_.where(ds.fields, {isPrimaryKey:true}), (pkField) => {
-            orClause[pkField.name] = keyValues
-          })
-          rowQuery.or.push(orClause)
+    if (keyValues || (Array.isArray(keyValues) && 0 < keyValues.length)) {
+      delete rowQuery.dataset
+      rowQuery.or = []
+      datasets.forEach( (ds) => {
+        let orClause = {'dataset': ds.id}
+        _.each(_.where(ds.fields, {isPrimaryKey:true}), (pkField) => {
+          orClause[pkField.name] = keyValues
         })
-      }
-      return rowQuery
+        rowQuery.or.push(orClause)
+      })
+    }
+    return rowQuery
   }
 
   

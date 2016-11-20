@@ -11,7 +11,8 @@
 <table class="table table-stripped" id='dataSetTable'>
   <thead>
    <tr>
-    <% fields.forEach((field) => { 
+    <% if (dataset.fields) {
+       fields.forEach((field) => { 
         if (field.isVisible) {
          var fldName = (field.label ? field.label : morph.toTitle(field.name))
     %>
@@ -32,7 +33,8 @@
     <%    } 
       }) %>
       </tr>
-    <% }) %>
+    <% })
+      }  %>
   </tbody>
 </table>
 <script>
