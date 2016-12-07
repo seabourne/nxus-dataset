@@ -19,14 +19,15 @@
             <div class="col-sm-7">
                 <select id="control_fieldIds" class="form-control" name="fieldIds" multiple>
             <%  if (locals.datasets) {
-                    var j = 1;
                     datasets.forEach( (dataset) => {
-                        dataset.fields.forEach( (field) => {
-                            let selected = ( _.contains(object.fieldIds, field.id) ? "selected" : "" )
+                        if (dataset.fields) {
+                            dataset.fields.forEach( (field) => {
+                                let selected = ( _.contains(object.fieldIds, field.id) ? "selected" : "" )
 
             %>
                     <option value="<%= field.id %>" <%= selected %> ><%=dataset.name + ": " + field.name %></option>       
-            <%          })
+            <%              })
+                        }
                 
                    })
                 }
