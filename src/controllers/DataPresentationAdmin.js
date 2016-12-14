@@ -3,6 +3,7 @@ import {templater} from 'nxus-templater'
 import {actions} from 'nxus-web'
 import {router} from 'nxus-router'
 import _ from 'underscore'
+import {Promise} from 'bluebird'
 
 /**
  * Admin for a DataPresentatation model `datasets-datapresentation`:
@@ -16,13 +17,16 @@ export default class DataPresentationAdmin extends AdminController {
   constructor(opts={}) {
     super({
       modelIdentity: 'datasets-datapresentation',
-      instanceTitleField: 'DataPresentation',
+      instanceTitleField: 'Data Presentation',
+      displayName: 'Data Presentations',
       ...opts
     })
     this.peerModelIdentity = opts.peerModelIdentity || 'datasets-dataset'
     //override defaults for edit and create form template
-    templater.replace().template(__dirname+'/../templates/datasetsDatapresentationForm.ejs', this.pageTemplate, this.templatePrefix+'-edit')
-    templater.replace().template(__dirname+'/../templates/datasetsDatapresentationForm.ejs', this.pageTemplate, this.templatePrefix+'-create')
+    templater.replace().template(__dirname+'/../templates/datasets-datapresentation-form.ejs', this.pageTemplate, this.templatePrefix+'-edit')
+    templater.replace().template(__dirname+'/../templates/datasets-datapresentation-form.ejs', this.pageTemplate, this.templatePrefix+'-create')
+    //override default list template
+    templater.replace().template(__dirname+'/../templates/datasets-datapresentation-list.ejs', this.pageTemplate, this.templatePrefix+'-list')
   }
 
   /**
@@ -45,6 +49,25 @@ export default class DataPresentationAdmin extends AdminController {
         ...context
       }
       return retObj
+    })
+  }
+
+  /**
+   * Override the default ViewController list action,
+   * to include DataSet field info with the listing page
+   * for DataPresentations.
+   * @param  {[type]} req   [description]
+   * @param  {[type]} res   [description]
+   * @param  {[type]} query [description]
+   * @return {[type]}       [description]
+   */
+  list(req, res, query) {
+    return Promise.all([query,this.models[this.peerModelIdentity].find()])
+    .spread( ( presentations, datasets) => {
+      return {
+        presentations,
+        datasets,
+        }
     })
   }
 
