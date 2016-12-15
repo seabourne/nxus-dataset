@@ -56,10 +56,7 @@ export default class DataPresentationAdmin extends AdminController {
    * Override the default ViewController list action,
    * to include DataSet field info with the listing page
    * for DataPresentations.
-   * @param  {[type]} req   [description]
-   * @param  {[type]} res   [description]
-   * @param  {[type]} query [description]
-   * @return {[type]}       [description]
+   * See nxus-web ViewController for the super implementation notes.
    */
   list(req, res, query) {
     return Promise.all([query,this.models[this.peerModelIdentity].find()])
