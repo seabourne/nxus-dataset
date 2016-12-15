@@ -1,4 +1,4 @@
-import {AdminController} from 'nxus-admin'
+import {AdminController, admin} from 'nxus-admin'
 import {templater} from 'nxus-templater'
 import {actions} from 'nxus-web'
 import {router} from 'nxus-router'
@@ -22,7 +22,8 @@ export default class DataSetAdmin extends AdminController {
       modelIdentity: 'datasets-dataset',
       icon: 'fa fa-table',
       ignoreFields: ['id', 'fields', 'rowCount', 'createdAt', 'updatedAt' ],
-      instanceTitleField: 'DataSet'
+      instanceTitleField: 'Data Set',
+      displayName: 'Data Sets',
     })
     this._fieldBuilder = new FieldUtil.FieldBuilder()
     //custom datasets edit form template
@@ -83,7 +84,7 @@ export default class DataSetAdmin extends AdminController {
     return this.model.findOne(setId).then((dataset) => {
       let opts = {
         id: setId,
-        dataset
+        dataset,
       }
       return templater.render(this.templatePrefix+"-upload-datarow", opts).then(::res.send)
     })
@@ -128,7 +129,7 @@ export default class DataSetAdmin extends AdminController {
         this.log.debug( "nxus-dataset saveDataUpload dataset " + setId + " fields:", currentFields )
         return set.save().then( () => {
           req.flash('info', "Successfully loaded " + rows.length + " data rows")
-          res.redirect(this.routePrefix) //TODO -- route to the edit form for this dataset instead?
+          res.redirect(this.routePrefix + '/edit/' + set.id)
         })
       })
     }).catch((e) => {
@@ -182,7 +183,7 @@ export default class DataSetAdmin extends AdminController {
           return this.model.create({name: req.body.name, source: req.body.source, description: req.body.description})
           .then( (newRecord) => {
           this.log.debug("dataset created ", newRecord.id)
-          return res.redirect(this.routePrefix)
+          return res.redirect(this.routePrefix + '/upload-datarow/' + newRecord.id)
           })
         }
       } else {

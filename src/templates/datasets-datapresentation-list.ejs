@@ -1,0 +1,57 @@
+<!-- admin page to view list of DataPresentation, modified from nxus-web default list template -->
+<% if (typeof actions != 'undefined') { %>
+<%- render("actions-buttons", {actions: actions.default, makeActionUrl: function(link) {return base + link }}) %>
+<% } %>
+
+<table class="table table-stripped">
+    <thead>
+        <tr>
+          <% attributes.forEach(function(attr) { %>
+            <th><%= attr.label %></th>
+          <% }) %>
+          <% if (typeof actions != "undefined" && actions.instance) { %>
+           <th></th>
+          <% } %>
+        </tr>
+    </thead>
+    <tbody>
+      <% presentations.forEach(function(u) { %>
+        <tr>
+          <% attributes.forEach(function(attr) { %>
+            <% if(attr.isTitle) { %>
+              <td><a href="<%=instanceUrl%>/<%=u[idField]%>"><%if (u[attr.name]) { %><%=u[attr.name]%><% } else { %>[empty]<%}%></a></td>
+            <% } else if (attr.name == 'fieldIds') { %>
+            <td>
+            <%    if (u[attr.name]) {
+                    u[attr.name].forEach( (fieldId) => {
+                      let currField = null
+                      let matchedDataSet = _.find(datasets, (dataset) => { return ( currField = _.findWhere(dataset.fields, {id: fieldId}) ) })
+                      if (matchedDataSet && currField) {  %>
+                      <%- matchedDataSet.name %>:&nbsp;<%- currField.name %><br/>
+            <%        } else { %>
+                        <span class="label label-warning">!</span><span class="text-danger"><%- fieldId %> not found in available Data Sets</span><br/>
+            <%        }
+                    })
+                  } %>
+            </td>
+            <% } else if (attr.type == 'password') { %> <% return %>
+            <% } else if (attr.type == 'boolean') { %>
+            <td><%- u[attr.name] ? '<i class="fa fa-check"></i>' : '' %></td>
+            <% } else { %>
+            <td><%= u[attr.name] %></td>
+            <% } %>
+          <% }) %>
+          <% if (typeof actions != "undefined" && actions.instance) { %>
+            <td class="bold">
+              <%- render("actions-icons", {actions: actions.instance, makeActionUrl: function(link) { return base + link + u[idField]}}) %>
+            </td>
+          <% } %>
+        </tr>
+      <% }) %>
+    </tbody>   
+</table>
+<div class="row">
+  <div class="col-md-12 text-center">
+    <%- render('web-controller-paginator') %>
+  </div>
+</div>
