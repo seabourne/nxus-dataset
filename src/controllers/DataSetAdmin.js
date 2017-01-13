@@ -24,6 +24,11 @@ export default class DataSetAdmin extends AdminController {
       ignoreFields: ['id', 'fields', 'rowCount', 'createdAt', 'updatedAt' ],
       instanceTitleField: 'Data Set',
       displayName: 'Data Sets',
+      paginationOptions: {
+        sortField: 'id',
+        sortDirection: 'ASC',
+        itemsPerPage: 20,
+      }
     })
     this._fieldBuilder = new FieldUtil.FieldBuilder()
     //custom datasets edit form template
@@ -51,7 +56,7 @@ export default class DataSetAdmin extends AdminController {
     .then( (editContext) => {
       let instance = editContext.object
       this.log.debug( "editing dataset id:  ", instance.id)
-      return [this.models['datasets-datarow'].find({dataset: instance.id}), editContext]
+      return [this.models['datasets-datarow'].find({where: {dataset: instance.id}, limit: 5, sort: 'id'}), editContext]
     }).spread( (datarows, context) => {
       // this.log.debug( "find returned matched datarows:  ", datarows)
       let retObj = {
@@ -67,11 +72,24 @@ export default class DataSetAdmin extends AdminController {
     let setId = req.param('id')
     let opts = {}
     return this.model.findOne(setId).then((dataset) => {
+      if (!dataset) throw new Error('DataSet not found')
       opts.dataset = dataset
-      return this.models['datasets-datarow'].find({dataset: setId})
+      return this.defaultContext(req)
+    }).then( (defaultOptions) => {
+      opts = Object.assign(defaultOptions, opts)
+      let pageOptions = opts.pagination;
+      return this.models['datasets-datarow'].find( 
+        { where: {dataset: setId}, sort: (pageOptions.sortField + ' ' + pageOptions.sortDirection),
+          limit: pageOptions.itemsPerPage,
+          skip: ((pageOptions.currentPage-1)*pageOptions.itemsPerPage) 
+        })
     }).then( (datarows) => {
       opts.datarows = datarows
       return templater.render(this.templatePrefix+"-view-datarow", opts).then(::res.send)
+    }).catch((e) => {
+      this.log.error( "nxus-dataset dataSetViewData() error ", e, " at: ", e.stack);
+      req.flash('error', "Error : " + e)
+      return res.redirect(this.routePrefix)
     })
   }
 

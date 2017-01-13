@@ -19,6 +19,11 @@ export default class DataPresentationAdmin extends AdminController {
       modelIdentity: 'datasets-datapresentation',
       instanceTitleField: 'Data Presentation',
       displayName: 'Data Presentations',
+      paginationOptions:  {
+        sortField: 'name',
+        sortDirection: 'ASC',
+        itemsPerPage: 10,
+      },
       ...opts
     })
     this.peerModelIdentity = opts.peerModelIdentity || 'datasets-dataset'
