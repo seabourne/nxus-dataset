@@ -8,7 +8,7 @@
     "postversion": "npm run build-docs && git push && git push --tags",
     "test": "NODE_ENV=test mocha --compilers js:babel-register -R spec test/*.js ",
     "compile": "babel src --out-dir lib; npm run copyTemplates",
-    "copyTemplates": "cp -r src/templates lib/; for each in `ls src/modules/`; do if [ -d src/modules/$each/templates ]; then cp -r src/modules/$each/templates lib/modules/$each; fi; done;",
+    "copyTemplates": "rm -f lib/templates/*; cp -r src/templates lib/;",
     "prepublish": "npm run compile",
     "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
     "publish-docs": "npm run build-docs && git add ./README.md && git commit -m 'Updated README API Docs' && git push"
@@ -32,12 +32,12 @@
     "bluebird": "^3.3.3",
     "morph": "^0.2.0",
     "node-uuid": "^1.4.7",
-    "nxus-admin": "^4.0.0-2",
+    "nxus-admin": "^4.0.0-6",
     "nxus-data-manager": "^4.0.0-1",
     "nxus-router": "^4.0.0-1",
     "nxus-storage": "^4.0.0-2",
-    "nxus-templater": "^4.0.0-1",
-    "nxus-web": "^4.0.0-4",
+    "nxus-templater": "^4.0.0-2",
+    "nxus-web": "^4.0.0-7",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
