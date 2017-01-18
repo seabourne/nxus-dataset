@@ -9,10 +9,12 @@
   <div class="col-md-12"><p><b>Source:</b>&nbsp;<%= object.source %> </p></div>
 </div>
 <table class="table table-stripped" id='dataSetTable'>
-  <thead>
+
+    <% if (fields) {
+    %>
+   <thead>
    <tr>
-    <% if (dataset.fields) {
-       fields.forEach((field) => { 
+    <%  fields.forEach((field) => { 
         if (field.isVisible) {
          var fldName = (field.label ? field.label : morph.toTitle(field.name))
     %>
@@ -34,11 +36,26 @@
       }) %>
       </tr>
     <% })
-      }  %>
-  </tbody>
+    %>
+    </tbody>
+    <% } else { %>
+    <tr><td>No Data </td></tr>
+    <% }  %>
 </table>
 <script>
-  $(document).ready(function(){
-    $('#dataSetTable').DataTable();
-  });
+  <% if (10 < rows.length) {
+
+      if (! locals.pagination ) {
+        var pagination = {pageLength: 10};
+      }
+  %>
+    $(document).ready(function(){
+      $('#dataSetTable').DataTable({
+          dom: 'Bfrtip',
+          buttons: ['copy', 'csv', 'excel'],
+          pageLength: <%=pagination.pageLength%>
+        });
+    });
+  <% }
+   %>
 </script>

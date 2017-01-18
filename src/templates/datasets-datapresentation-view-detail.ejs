@@ -1,0 +1,73 @@
+<!-- datasets-datapresentation-view-detail.ejs -->
+<% var fieldsObj = dataPresentation.fields
+   var data = dataPresentation.data
+%>
+<div class="row">
+  <div class="col-md-12"><p><b>Title:</b>&nbsp;<%= dataPresentation.label %> </p></div>
+</div>
+<div class="row">
+  <div class="col-md-12"><p><b>Name:</b>&nbsp;<%= dataPresentation.name %> </p></div>
+</div>
+<div class="row">
+  <div class="col-md-12"><p><b>Sources:</b>&nbsp;
+    <% if (dataSources) {
+        dataSources.forEach( (source) => {
+    %>
+        <%= source %> <br/>
+    <%
+        })
+    }
+    %>
+  </p></div>
+</div>
+<table class="table table-stripped" id="datatable">
+    <thead>
+        <tr>
+          <%  let firstPK = _.findWhere(_.values(fieldsObj), {isPrimaryKey: true}) 
+              if (firstPK) { %>
+              <th><%= firstPK.label %></th>
+          <%  }
+              _.keys(fieldsObj).forEach(function(fKey) { 
+                if (!fieldsObj[fKey].isPrimaryKey) { %>
+              <th><%= fieldsObj[fKey].label %></th>
+          <%    } 
+              }) %>
+        </tr>
+    </thead>
+    <tbody>
+
+        <%  if (firstPK) {    //data is row-objects indexed by PK value
+              _.keys(data).sort().forEach( (key) => {  %>
+              <tr>
+                <td><%= key %></td>
+        <%      _.keys(fieldsObj).forEach(function(fKey) { 
+                  if(! fieldsObj[fKey].isPrimaryKey) { %>
+                   <td><%= data[key][fKey] %></td>
+        <%        }
+                }) %>
+              </tr>
+        <%    })
+            } else {  //data is single object indexed by field ids
+        %>
+              <tr>
+        <%    _.keys(fieldsObj).forEach(function(fKey) { 
+               if(! fieldsObj[fKey].isPrimaryKey) { %>
+               <td><%= data[fKey]%></td>
+        <%      }
+              }) %>
+              </tr>
+        <%  
+            } %>
+    </tbody>   
+</table>
+<% if (pagination.pageLength < _.keys(data).length) { %>
+  <script type='text/javascript'>
+    $(document).ready(function() {
+      $('#datatable').DataTable({
+        dom: 'Bfrtip',
+        buttons: ['copy', 'csv', 'excel'],
+        pageLength: <%=pagination.pageLength%>
+      });
+    });
+  </script>
+<% } %>

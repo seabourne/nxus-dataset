@@ -21,15 +21,14 @@ class DataSets extends MVCModule {
    * returning normalized data for each in an arry
    * @param  {Object} query WaterLine query on DataPresentation model
    * @param { Array of, or single, string} rowKeyValues optional primary key value(s) to filter the resulting rows that are returned in the "data" property
+   * @param  {Object} queryOptions Waterline query options, such as `sort`, `limit`, etc.
    * @return {arry of objects}       each object in the array is the full data for one of the queried presentations, 
-   * returned in the format provided by `extractDataForPresentation()`
+   * returned in the format provided by `DataPresentationUtil.extractDataForPresentation()`
    */
-  loadPresentations(query, rowKeyValues) {
+  loadPresentations(query, rowKeyValues, queryOptions) {
     return this.models['datasets-datapresentation'].find(query)
     .then( (presentations) => {
       let allPresentationsFieldIds = _.flatten(_.pluck(presentations, 'fieldIds'))
-      // this.log.debug( "got presentations ids: ", _.pluck(presentations, 'id'), 
-      //   " concated all field ids ", _.pluck(allPresentationsFieldIds, 'id') )
       return([presentations, this.models[this.dataSetModel].find({'fields.id': allPresentationsFieldIds})])
     }).spread( (presentations, dataSets) => {
       if (!dataSets) return ([presentations, dataSets, []])
@@ -49,7 +48,13 @@ class DataSets extends MVCModule {
     })
   }
 
-  loadPresentationByName(name) {
+  /**
+   * Convenience method to load a presentation by name.
+   * @param  {String} name         name of a data presentation, for exact match.
+   * @param  {Object} queryOptions Waterline query options, such as `sort`, `limit`, etc.
+   * @return {array of Object}              see return value for `loadPresentations`
+   */
+  loadPresentationByName(name, queryOptions) {
     return loadPresentations({name: name})
   }
 
@@ -59,14 +64,14 @@ class DataSets extends MVCModule {
    * @param  {Array of field-id's} fields 
    * @return {Object}        Has just the 'data' and 'fields' properties per `loadPresentations()`
    */
-  loadFields(fields, rowKeyValues) {
+  loadFields(fields, rowKeyValues, queryOptions) {
     if (_.isEmpty(fields)) {
       return {}
     }
     return this.models['datasets-dataset'].find({'fields.id': fields})
     .then( (dataSets) => {
       if (!dataSets) return ([[], []])
-      let rowQuery = this._buildRowQuery(dataSets, rowKeyValues)
+      let rowQuery = this._buildRowQuery(dataSets, rowKeyValues, queryOptions)
       return([dataSets, this.models['datasets-datarow'].find(rowQuery)])
     }).spread( (dataSets, dataRows) => {
       let retObj = {
@@ -77,7 +82,7 @@ class DataSets extends MVCModule {
     })
   }
 
-  _buildRowQuery(datasets, keyValues) {
+  _buildRowQuery(datasets, keyValues, queryOptions) {
     let rowQuery = {dataset: _.pluck(datasets, 'id')}
     if (keyValues || (Array.isArray(keyValues) && 0 < keyValues.length)) {
       delete rowQuery.dataset
@@ -89,6 +94,10 @@ class DataSets extends MVCModule {
         })
         rowQuery.or.push(orClause)
       })
+    }
+    if (queryOptions) {
+      rowQuery = {where: rowQuery}
+      rowQuery = Object.assign(rowQuery, queryOptions)
     }
     return rowQuery
   }

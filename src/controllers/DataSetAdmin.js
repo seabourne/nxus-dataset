@@ -75,16 +75,20 @@ export default class DataSetAdmin extends AdminController {
       if (!dataset) throw new Error('DataSet not found')
       opts.dataset = dataset
       return this.defaultContext(req)
-    }).then( (defaultOptions) => {
-      opts = Object.assign(defaultOptions, opts)
+    }).then( (defaultContext) => {
+      opts = Object.assign(defaultContext, opts)
       let pageOptions = opts.pagination;
-      return this.models['datasets-datarow'].find( 
+      let datasetPK = _.findWhere(opts.dataset.fields, {isPrimaryKey: true})
+      if (datasetPK) pageOptions.sortField = datasetPK.name
+      return [this.models['datasets-datarow'].find( 
         { where: {dataset: setId}, sort: (pageOptions.sortField + ' ' + pageOptions.sortDirection),
           limit: pageOptions.itemsPerPage,
           skip: ((pageOptions.currentPage-1)*pageOptions.itemsPerPage) 
-        })
-    }).then( (datarows) => {
+        }), this.models['datasets-datarow'].count().where({dataset: setId})]
+    }).spread( (datarows, count) => {
       opts.datarows = datarows
+      opts.pagination.count = count
+      opts.base = '/admin/datasets-dataset/view-data/' + setId //pagination URL base
       return templater.render(this.templatePrefix+"-view-datarow", opts).then(::res.send)
     }).catch((e) => {
       this.log.error( "nxus-dataset dataSetViewData() error ", e, " at: ", e.stack);

@@ -33,9 +33,9 @@
         <div class="row">
           <div class="col-sm-offset-1 col-md-7">
             <div class="row">
-              <div class="col-md-6">
-                <b>Field Name:</b> <%- field.name %>
-                <b>id:</b> <%- field.id %>
+              <div class="col-md-7">
+                <b>Field Name:</b>&nbsp;<%- field.name %>
+                <b>id:</b>&nbsp;<%- field.id %>
               </div>
             </div>
 
@@ -43,10 +43,11 @@
           _.each(field, (value, key) => {
             if ( 'id' != key && 'name' != key ) {
         %>
-            <div class="form-group-row">
-              <div class="col-md-7">
-                  <label for="object.field[<%- k %>].<%- key %>" class="col-md-2 col-form-label  to-right"><%- key %></label>
-                  <div class="col-md-5">
+            <div class="row">
+              <div class="col-md-3">
+                  <label for="object.field[<%- k %>].<%- key %>" class="col-form-label  to-left"><%- key %></label>
+              </div>
+              <div class="col-md-5">
 
         <%        if ('isPrimaryKey' == key) {
                     var rchecked = ( value ? "checked='checked'" : "" )
@@ -70,7 +71,6 @@
                     <input type="text" class="form-control" name="field.<%- key %>.<%- field.id %>" id="object.field[<%- k %>].<%- key %>" value="<%- value %>" />
         <%        }
         %>
-                  </div>
               </div>
               
             </div>
