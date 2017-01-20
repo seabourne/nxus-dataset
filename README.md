@@ -88,8 +88,8 @@ object with properties set to the value of primary key field in each row.
 
 -   `presentationData` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** per extractDataForPresentation()
 
-Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** new data object where the presentationData.data
-is transformed with properties set to primary key value(s) for each record in the source data array.
+Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** presentationData with data property transformed into a single object,
+ with keys of each distinct primary key value, grouping all data for that primary key.
 
 ## guessType
 
@@ -118,6 +118,16 @@ returning normalized data for each in an arry
 
 -   `query` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** WaterLine query on DataPresentation model
 -   `rowKeyValues`  
+-   `queryOptions` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Waterline query options, such as `sort`, `limit`, etc.
+
+## loadPresentationByName
+
+Convenience method to load a presentation by name.
+
+**Parameters**
+
+-   `name` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** name of a data presentation, for exact match.
+-   `queryOptions` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Waterline query options, such as `sort`, `limit`, etc.
 
 ## loadFields
 
@@ -128,5 +138,6 @@ primary key rows with that value or values.
 
 -   `fields`  
 -   `rowKeyValues`  
+-   `queryOptions`  
 
 Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Has just the 'data' and 'fields' properties per `loadPresentations()`
