@@ -8,7 +8,7 @@
 <div class="row">
   <div class="col-md-12"><p><b>Source:</b>&nbsp;<%= dataset.source %> </p></div>
 </div>
-<table class="table table-stripped" id='dataSetTable'>
+<table class="table table-stripped" id='DataSet-DataRow-Table'>
   <thead>
    <tr>
     <% if (dataset.fields) {
@@ -34,3 +34,8 @@
     %>
   </tbody>
 </table>
+<div class="row">
+  <div class="col-md-12 text-center">
+    <%- render('web-controller-paginator') %>
+  </div>
+</div>

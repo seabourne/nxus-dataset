@@ -23,7 +23,13 @@ export default class DataSetView extends ViewController {
         morph: morph,
         rows: datarows,
         fields: (context.object.fields ? context.object.fields : []),
-        ...context
+        pagination: {pageLength: 50},
+        scripts: ['//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js',
+          '//cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js',
+          '//cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js'],
+        styles: ['//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css',
+          '//cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css'],
+        ...context,
       }
       return retObj
     })

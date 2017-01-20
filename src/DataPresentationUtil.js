@@ -155,8 +155,8 @@ export default class DataPresentationUtil {
    * reformat the 'data' rows in the supplied presentation data into a single
    * object with properties set to the value of primary key field in each row.
    * @param  {Object} presentationData per extractDataForPresentation()
-   * @return {Object}                new data object where the presentationData.data
-   * is transformed with properties set to primary key value(s) for each record in the source data array.  
+   * @return {Object} presentationData with data property transformed into a single object,
+   *  with keys of each distinct primary key value, grouping all data for that primary key.
    */
   indexDataIntoObjectByPrimaryKeyValue(presentationData) {
     //group records by the value of given field-id
