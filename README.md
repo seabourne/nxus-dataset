@@ -2,6 +2,8 @@
 
 ## extractDataForPresentation
 
+[src/DataPresentationUtil.js:26-35](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/DataPresentationUtil.js#L26-L35 "Source code on GitHub")
+
 Extract data relevant to the DataPresentation from collections of DataSet's and DataRow's.
 Creates a normalized DataPresentation data-object, with header info from the presentation and all matching DataRows trimmed to just the fields needed.
 
@@ -22,6 +24,8 @@ Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 ## createDataRowsForFields
 
+[src/DataPresentationUtil.js:46-71](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/DataPresentationUtil.js#L46-L71 "Source code on GitHub")
+
 Create list of data objects, with properties set to the field-id's to prevent naming conflicts.
 The returned data will include just these field values, along with any fields marked isPrimaryKey=true
 
@@ -34,6 +38,8 @@ The returned data will include just these field values, along with any fields ma
 Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** Transformed DataRow objects, with properties set to the field-id's.
 
 ## createFieldsIndexedById
+
+[src/DataPresentationUtil.js:81-96](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/DataPresentationUtil.js#L81-L96 "Source code on GitHub")
 
 Pull field info for fields matching the field-id's in the supplied fieldIdList,
 and reformat into an object indexed by those field-id's.
@@ -48,6 +54,8 @@ Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 ## formatPresentationDataByFieldLabel
 
+[src/DataPresentationUtil.js:105-111](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/DataPresentationUtil.js#L105-L111 "Source code on GitHub")
+
 reformat array of presentationData objects
 
 **Parameters**
@@ -60,6 +68,8 @@ Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refere
 
 ## formatDataWithFieldLabel
 
+[src/DataPresentationUtil.js:119-139](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/DataPresentationUtil.js#L119-L139 "Source code on GitHub")
+
 reformat presentationData.data
 
 **Parameters**
@@ -71,6 +81,8 @@ Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 ## indexPresentationDataByPrimaryKeyValue
 
+[src/DataPresentationUtil.js:146-152](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/DataPresentationUtil.js#L146-L152 "Source code on GitHub")
+
 reformat array of presntation data using indexDataIntoObjectByPrimaryKeyValue()
 
 **Parameters**
@@ -80,6 +92,8 @@ reformat array of presntation data using indexDataIntoObjectByPrimaryKeyValue()
 Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** 
 
 ## indexDataIntoObjectByPrimaryKeyValue
+
+[src/DataPresentationUtil.js:161-186](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/DataPresentationUtil.js#L161-L186 "Source code on GitHub")
 
 reformat the 'data' rows in the supplied presentation data into a single
 object with properties set to the value of primary key field in each row.
@@ -91,25 +105,42 @@ object with properties set to the value of primary key field in each row.
 Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** presentationData with data property transformed into a single object,
  with keys of each distinct primary key value, grouping all data for that primary key.
 
-## guessType
+## DataSets
 
-best guess typing for supplied value.
+[src/index.js:35-129](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/index.js#L35-L129 "Source code on GitHub")
 
-**Parameters**
+**Extends MVCModule**
 
--   `val`  
--   `name` **\[[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)](default '')** column header or hint as to type.
+## Nxus Dataset
 
-## buildFieldInfo
+Module that provides spreadsheet-like data handling for nxus websites.
+Nxus Dataset installs admin menus with various workflows for creating new DataSets, uploading rows to a DataSet, 
+and gathering columns from Datasets into  Data Presentations for use in UX visualizations.
 
-Based on supplied data row, build array of field info objects
-which include a unique field-id for each property on the row.
+### Installation
 
-**Parameters**
+     > npm install nxus-dataset --save
 
--   `sample` **datarow** representative row of data
+### Data Models
 
-## loadPresentations
+Models provided here have minimal attributes for flexibility of use. 
+The `DataSet` model holds meta-data about a collection of `DataRow` records, 
+without explicit association in the model so that other child models for a `DataRow` might be switched in.
+`DataRow` defines only a link to it's parent `DataSet`.
+`DataPresentation` defines additional meta-data and stores a reference to a collection of DataRow columns (fields).
+
+### Formats
+
+### Examples
+
+### Options
+
+   `dataSetModel` replace the default `datasets-dataset` model with your own
+   `dataRowModel` replace the default `datasets-datarow` model with your own
+
+### loadPresentations
+
+[src/index.js:51-72](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/index.js#L51-L72 "Source code on GitHub")
 
 Gather DataPresentation objects returned by the given query,
 returning normalized data for each in an arry
@@ -118,9 +149,14 @@ returning normalized data for each in an arry
 
 -   `query` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** WaterLine query on DataPresentation model
 -   `rowKeyValues`  
--   `queryOptions` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Waterline query options, such as `sort`, `limit`, etc.
+-   `queryOptions` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Waterline query options, such as `sort`, `limit`, `skip`, etc.
 
-## loadPresentationByName
+Returns **[array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** each object in the array is the full data for one of the queried presentations, 
+returned in the format provided by <module:DataPresentationUtil#extractDataForPresentation>
+
+### loadPresentationByName
+
+[src/index.js:80-82](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/index.js#L80-L82 "Source code on GitHub")
 
 Convenience method to load a presentation by name.
 
@@ -129,7 +165,9 @@ Convenience method to load a presentation by name.
 -   `name` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** name of a data presentation, for exact match.
 -   `queryOptions` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Waterline query options, such as `sort`, `limit`, etc.
 
-## loadFields
+### loadFields
+
+[src/index.js:90-106](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/index.js#L90-L106 "Source code on GitHub")
 
 Load data for the supplied list of fields. If 'rowKeyValues' is supplied then limit returned data to 
 primary key rows with that value or values.
@@ -141,3 +179,25 @@ primary key rows with that value or values.
 -   `queryOptions`  
 
 Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Has just the 'data' and 'fields' properties per `loadPresentations()`
+
+## guessType
+
+[src/fieldUtils.js:27-46](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/fieldUtils.js#L27-L46 "Source code on GitHub")
+
+best guess typing for supplied value.
+
+**Parameters**
+
+-   `val`  
+-   `name` **\[[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)](default '')** column header or hint as to type.
+
+## buildFieldInfo
+
+[src/fieldUtils.js:53-67](https://github.com/seabourne/nxus-dataset/blob/ecd85ff88bf78af5b6c5a44f601a0e6b08b0e7e6/src/fieldUtils.js#L53-L67 "Source code on GitHub")
+
+Based on supplied data row, build array of field info objects
+which include a unique field-id for each property on the row.
+
+**Parameters**
+
+-   `sample` **datarow** representative row of data
