@@ -10,7 +10,7 @@
     "compile": "babel src --out-dir lib; npm run copyTemplates",
     "copyTemplates": "rm -f lib/templates/*; cp -r src/templates lib/;",
     "prepublish": "npm run compile",
-    "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
+    "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/index.js --config documentation.yml --github --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
     "publish-docs": "npm run build-docs && git add ./README.md && git commit -m 'Updated README API Docs' && git push"
   },
   "repository": {
