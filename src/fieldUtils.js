@@ -16,9 +16,15 @@ export const FIELD_DEFAULTS = {
   "label":"", 
   "type":DECIMAL_TYPE
 }
-
+/**
+ * Class to encapsulate some 
+ * rules about how DataSet fields are 
+ * structured and typed.
+ */
 export class FieldBuilder {
+
   /**
+   * @private
    * best guess typing for supplied value.
    * @param  {js primative} val  sample value
    * @param  {String} name column header or hint as to type.
@@ -44,7 +50,9 @@ export class FieldBuilder {
     }
     return type
   }
+
   /**
+   * @private
    * Based on supplied data row, build array of field info objects
    * which include a unique field-id for each property on the row.
    * @param  {datarow} sample representative row of data
@@ -68,8 +76,6 @@ export class FieldBuilder {
 
 
   _generateUniqueId() {
-  //maybe overkill for use in cases here,
-  // but it's unique across launches of the app
     return nodeUUID.v1();
   }
 }

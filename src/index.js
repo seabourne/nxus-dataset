@@ -8,7 +8,38 @@ import DataPresentationUtil from './DataPresentationUtil'
 
 const DATASET_MODEL_DEFAULT = 'datasets-dataset'
 const DATAROW_MODEL_DEFAULT = 'datasets-datarow'
-
+/**
+ * 
+ * Module that provides spreadsheet-like data handling for nxus websites.
+ * Nxus Dataset installs admin menus with various workflows for creating new DataSets, uploading rows to a DataSet, 
+ * and gathering columns from Datasets into  Data Presentations for use in UX visualizations.
+ * ## Installation
+ *      > npm install nxus-dataset --save
+ *
+ * ## Data Models
+ * Models provided here have minimal attributes for flexibility of use. 
+ * The `DataSet` model holds meta-data about a collection of `DataRow` records, 
+ * without an explicit parent-side association in the model so that other child models for a `DataRow` might be switched in.
+ * `DataRow` defines only a link to it's parent `DataSet`.
+ * `DataPresentation` defines additional meta-data and stores a reference to a collection of DataRow columns (fields).
+ *
+ * ## Formats
+ * The `load` methods in `DataSets` return a data object that replaces all user-provided keys from incoming column headers
+ * with generated identifiers to prevent any loss of data. 
+ * The original header info, as well as label and type information, is captured in a `fields` property.
+ * Uploaded DataRows are placed into a `data` propery and normalized into an object array with one data property and any  primary keys
+ * per object.
+ * 
+ * see {@link @module:./DataPresentationUtil#extractDataForPresentation} for full description of this format.
+ *
+ * ## Options
+ *  *  `dataSetModel` replace the default `datasets-dataset` model with your own
+ *  *  `dataRowModel` replace the default `datasets-datarow` model with your own
+ *
+ * ## Usage & Examples
+ *  *  [Usage](docs/usage.md)
+ *  *  [Examples](docs/datasets-joined-by-keys.md)
+ */
 class DataSets extends MVCModule {
   constructor (opts={}) {
     super()
@@ -21,9 +52,9 @@ class DataSets extends MVCModule {
    * returning normalized data for each in an arry
    * @param  {Object} query WaterLine query on DataPresentation model
    * @param { Array of, or single, string} rowKeyValues optional primary key value(s) to filter the resulting rows that are returned in the "data" property
-   * @param  {Object} queryOptions Waterline query options, such as `sort`, `limit`, etc.
-   * @return {arry of objects}       each object in the array is the full data for one of the queried presentations, 
-   * returned in the format provided by `DataPresentationUtil.extractDataForPresentation()`
+   * @param  {Object} queryOptions Waterline query options, such as `sort`, `limit`, `skip`, etc.
+   * @return {array}       each object in the array is the full data for one of the queried presentations, 
+   * returned in the format provided by {@link @module:./DataPresentationUtil#extractDataForPresentation}
    */
   loadPresentations(query, rowKeyValues, queryOptions) {
     return this.models['datasets-datapresentation'].find(query)

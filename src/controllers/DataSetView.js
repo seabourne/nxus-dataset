@@ -2,6 +2,9 @@ import {ViewController} from 'nxus-web'
 import {templater} from 'nxus-templater'
 import morph from 'morph'
 
+/**
+ * View pages for list and detail of a DataSet and its associated DataRow's
+ */
 export default class DataSetView extends ViewController {
 
   constructor() {

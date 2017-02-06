@@ -50,10 +50,10 @@ Code such as the following:
      import {datasets} from 'nxus-dataset'
      ...
      datasets.loadPresentations({name: 'Fruit Info'}).then( (presentationArr) => {
-        return { data: presentationArr }
+        return { result: presentationArr }
      })
 
-if the presentation is named *Fruit Info* this would return `data` with a value such as:
+if the presentation is named *Fruit Info* (and the only presentation so named) this code would return an array in the `result` property with a value:
 
 <pre>
 [
@@ -125,7 +125,19 @@ if the presentation is named *Fruit Info* this would return `data` with a value 
 ]
 </pre>
 
-applying the utilty *formatPresentationDataByFieldLabel* will transform the `data` property of this presentation object:
+`name` and `label` properties are assigned by the user who created/edits the data presentation using the admin ui.
+`fields` is a concatentation of the field data for each data set field included in the presentation, indexed by the field id. 
+The `fields` object also includes all primary key fields (if any are defined) from referenced data sets.
+
+applying the utilty *formatPresentationDataByFieldLabel* 
+
+     import {datasets, dataPresentationUtil} from 'nxus-dataset'
+     ...
+     datasets.loadPresentations({name: 'Fruit Info'}).then( (presentationArr) => {
+        return { result2: dataPresentationUtil.formatPresentationDataByFieldLabel(presentationArr[0]) }
+     })
+
+will transform the `data` property of `result2` and return `result2.data` value:
 
 <pre>
 {
@@ -148,7 +160,14 @@ applying the utilty *formatPresentationDataByFieldLabel* will transform the `dat
 }
 </pre>
 
-while the utility *indexPresentationDataByPrimaryKeyValue* will transform the `data` property:
+The other properties of `result2` remain unchanged from the original object returned by *loadPresentations*.
+
+Use the  dataPresentationUtil *indexPresentationDataByPrimaryKeyValue* method to transform the `data` property of a presentation
+into a single object, whose keys are the primary key values of the presentation's data sets. In the example above, this would be coded:
+
+        return { result2: dataPresentationUtil.indexPresentationDataByPrimaryKeyValue(presentationArr[0]) }
+
+and returns in `result2.data` like this:
 
 <pre>
 {
@@ -173,3 +192,20 @@ while the utility *indexPresentationDataByPrimaryKeyValue* will transform the `d
   }
 }
 </pre>
+
+With this format, it's necessary to use the `fields` property of the data presentation to decode each of the field-id keys within this data, for example:
+
+    let header = ['category']
+    let rows = []
+    _.keys(result2.fields).forEach(function(fieldKey) {
+      let title = result2.fields[fieldKey].label
+      header.push(title)
+    }
+    _.keys(result2.data).forEach( (key) => {
+      let row = [key]
+      _.keys(result2.fields).forEach(function(fieldKey) {
+        row.push( result2.data[key][fieldKey])
+      }
+    }
+
+which would produce a 2d array of data rows and corresponding header row.
