@@ -160,6 +160,8 @@ will transform the `data` property of `result2` and return `result2.data` value:
 }
 </pre>
 
+Note that if 2 fields in the presentation have the same `label` this transformation will result in data loss.
+
 The other properties of `result2` remain unchanged from the original object returned by *loadPresentations*.
 
 Use the  dataPresentationUtil *indexPresentationDataByPrimaryKeyValue* method to transform the `data` property of a presentation
@@ -206,6 +208,7 @@ With this format, it's necessary to use the `fields` property of the data presen
       _.keys(result2.fields).forEach(function(fieldKey) {
         row.push( result2.data[key][fieldKey])
       }
+      rows.push(row)
     }
 
 which would produce a 2d array of data rows and corresponding header row.
