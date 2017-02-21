@@ -2,25 +2,29 @@
 'use strict';
 
 import _ from 'underscore'
-
+/**
+ * Utility methods for extracting and formatting data returned by raw queries,
+ * and for converting between various representations of that data.
+ */
 export default class DataPresentationUtil {
   constructor(opts={}) {
 
   }
 
   /**
+   * 
    * Extract data relevant to the DataPresentation from collections of DataSet's and DataRow's.
    * Creates a normalized DataPresentation data-object, with header info from the presentation and all matching DataRows trimmed to just the fields needed.
    * @param  {DataPresentation} presentation 
    * @param  {collection of DataSet} datasets     DataSets that span the field-id's in the supplied presentation. Can be a super-set.
    * @param  {collection of DataRow} datarows     [description]
    * @return {Object}    with properties:
-   *   name - name of the presentation;
-   *   id - ID of the presentation;
-   *   label - label of the presentation;
-   *   fields - object with properties the DataPresentation field-ids including referenced DataSet primary key fields;
-   *    values are the field data from DataSet. See createFieldsIndexedById.
-   *   data - array of DataRow records, transformed to use the unique field-id's as property names. 
+   * *  `name` - name of the presentation;
+   * *  `id` - ID of the presentation;
+   * *  `label` - label of the presentation;
+   * *  `fields` - object indexed by the presentation field-ids, also including any referenced DataSet primary key fields;
+   *    values are the field data from DataSet. See {@link DataPresentationUtil#createFieldsIndexedById}.
+   * *  `data` - array of DataRow records, transformed to use the unique field-id's as property names. 
    *   Records hold only values that are selected in the presentation, plus any defined primary-key fields. See createDataRowsForFields.
    */
   extractDataForPresentation(presentation, datasets, datarows) {
@@ -76,7 +80,15 @@ export default class DataPresentationUtil {
    * @param  {Array} fieldIdList the field-id's to select
    * @param  {Array} datasets    array of DataSet objects holding fields, with name, id, etc.
    * @param  {Array} datarows    
-   * @return {Object}            field information from DataSet, indexed by field-id.
+   * @return {Object}            field information from DataSet, indexed by field-id. Each field-id holds
+   * an object with properties:
+   *  -  `name` the original column name uploaded into the referenced DataSet
+   *  -  `id` unique ID for the field
+   *  -  `label` readable label for display
+   *  -  `type` one of {@module ./fieldUtils#FIELD_TYPES}
+   *  -  `isPrimaryKey` boolean `true` if this is designated primary key
+   *  -  `isVisible` boolean hint to display pages whether to show this in rendered data listings
+   *  -  `dataset` ID of the DataSet for this field
    */
   createFieldsIndexedById(fieldIdList, datasets, datarows) {
     let fieldsObj = {}
@@ -100,7 +112,7 @@ export default class DataPresentationUtil {
    * @param  {Object} presentationData objects per extractDataForPresentation()
    * @return {Array}                  array of (new) presentationData objects where
    *  the normalized rows in each presentationData.data
-   *  have properties set to the field label. See formatDataWithFieldLabel()
+   *  have properties set to the field label. See {@link DataPresentationUtil#formatDataWithFieldLabel}.
    */
   formatPresentationDataByFieldLabel(presentationData) {
     if (_.isArray(presentationData)) {
@@ -112,8 +124,8 @@ export default class DataPresentationUtil {
 
   /**
    *  reformat presentationData.data
-   * @param  {Object} presentationData [description]
-   * @return {Object}                  a new copy of presentationData with 'data' 
+   * @param  {Object} presentationData per {@link DataPresentationUtil#extractDataForPresentation}
+   * @return {Object}                  a new copy of presentationData with `data` property 
    *   transformed into rows with property keys set to the field label.
    */
   formatDataWithFieldLabel(presentationData) {
@@ -139,9 +151,9 @@ export default class DataPresentationUtil {
   }
 
   /**
-   * reformat array of presntation data using indexDataIntoObjectByPrimaryKeyValue()
-   * @param  {Array} presentationData objects per extractDataForPresentation()
-   * @return {Array}                  
+   * reformat array of presentation data using indexDataIntoObjectByPrimaryKeyValue()
+   * @param  {Array} presentationData objects in normalized form per {@link DataPresentationUtil#extractDataForPresentation}
+   * @return {Array} formatted according to {@link DataPresentationUtil#indexDataIntoObjectByPrimaryKeyValue}     
    */
   indexPresentationDataByPrimaryKeyValue(presentationData) {
     if (_.isArray(presentationData)) {
@@ -154,9 +166,9 @@ export default class DataPresentationUtil {
   /**
    * reformat the 'data' rows in the supplied presentation data into a single
    * object with properties set to the value of primary key field in each row.
-   * @param  {Object} presentationData per extractDataForPresentation()
-   * @return {Object} presentationData with data property transformed into a single object,
-   *  with keys of each distinct primary key value, grouping all data for that primary key.
+   * @param  {Object} presentationData per {@link DataPresentationUtil#extractDataForPresentation}
+   * @return {Object} presentationData with `data` property transformed into a single object,
+   *  with keys of each distinct primary key value, grouping all data for that primary key value.
    */
   indexDataIntoObjectByPrimaryKeyValue(presentationData) {
     //group records by the value of given field-id
