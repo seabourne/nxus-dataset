@@ -5,10 +5,15 @@ import _ from 'underscore'
 /**
  * Utility methods for extracting and formatting data returned by raw queries,
  * and for converting between various representations of that data.
+ *  ### Constructor Options:
+ *   *   scatterRowData (default `false`) - if set to `true` the data returned for a presentation
+ *   is broken into individual records each containing just one of the presentation fields, 
+ *   with any primary key fields added.
+ *   Default (false) setting returns data where data records can hold multiple fields reflecting the source data-rows.
  */
 export default class DataPresentationUtil {
   constructor(opts={}) {
-
+    this.scatterRowData = opts.scatterRowData || false
   }
 
   /**
@@ -49,27 +54,33 @@ export default class DataPresentationUtil {
    */
   createDataRowsForFields(fieldIdList, datasets, datarows) {
     let retDataRows = []
-    fieldIdList.forEach( (fieldId) => {
-      let targetField = {}
-      let dataset = datasets.find((set) => { 
-        targetField = _.findWhere(set.fields, {id:fieldId})
-        return targetField
-      })
-      if (targetField && targetField.name) {
-        let primaryKeyFields = _.where(dataset.fields, {isPrimaryKey: true})
-        datarows.forEach( (row, index) => {
-          if (dataset.id == row.dataset && _.has(row, targetField.name)) {
-            let retRow = {}
-            retRow[targetField.id] = row[targetField.name]
-            if (primaryKeyFields) {
-              primaryKeyFields.forEach( (keyField) => {
-                retRow[keyField.id] = row[keyField.name]
-              })
-            }
-            if (retRow) retDataRows.push(retRow)
+    datarows.forEach( (row, index) => {
+      let dataset = _.findWhere(datasets, {id: row.dataset})
+      if (! dataset) throw new Error("Invalid state: incomplete datasets collection for data row ", row.id)
+      let targetFields = _.filter(dataset.fields, (dsField) => { return _.contains(fieldIdList, dsField.id) } )
+      let dataRows = []
+      let newRow = {}
+      targetFields.forEach( (field) => {
+        if (row[field.name]) {
+          newRow[field.id] = row[field.name]
+          if (this.scatterRowData) {
+            dataRows.push(newRow)
+            newRow = {} //push clones? I guess so.
           }
-        })
-      }
+        }
+        // console.log( "field ", field, " collected rows array: ", dataRows)
+      })
+      if (! _.isEmpty(newRow)) dataRows.push(newRow)
+      let primaryKeyFields = _.where(dataset.fields, {isPrimaryKey: true})
+      primaryKeyFields.forEach( (pkField) => {
+        if (row[pkField.name]) {
+          dataRows = _.map(dataRows, (dataObj) => { 
+            dataObj[pkField.id] = row[pkField.name]
+            return dataObj
+          })
+        }
+      })
+      retDataRows = retDataRows.concat(dataRows)
     })
     return retDataRows
   }

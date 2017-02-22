@@ -35,6 +35,7 @@ const DATAROW_MODEL_DEFAULT = 'datasets-datarow'
  * ## Options
  *  *  `dataSetModel` replace the default `datasets-dataset` model with your own
  *  *  `dataRowModel` replace the default `datasets-datarow` model with your own
+ *  *  `scatterRowData` if set to `true` will return data with just one field per record.
  *
  * ## Usage & Examples
  *  *  [Usage](docs/usage.md)
@@ -46,6 +47,7 @@ class DataSets extends MVCModule {
     this.dataPresentationUtil = new DataPresentationUtil()
     this.dataSetModel = opts.dataSetModel || DATASET_MODEL_DEFAULT
     this.dataRowModel = opts.dataRowModel || DATAROW_MODEL_DEFAULT
+    this.scatterRowData = opts.scatterRowData || false
   }
   /**
    * Gather DataPresentation objects returned by the given query,
