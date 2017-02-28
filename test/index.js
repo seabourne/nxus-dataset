@@ -7,8 +7,9 @@ import assert from 'assert'
 import _ from 'underscore'
 
 import DataPresentationUtil from '../src/DataPresentationUtil'
+import * as FieldUtil from '../src/fieldUtils'
 
-describe( "Util Methods ", () => {
+describe( "Data Util Methods ", () => {
   var utilsUnderTest;
   beforeEach( () => {
     utilsUnderTest = new DataPresentationUtil()
@@ -182,3 +183,51 @@ const NO_PRIMARY_KEY_TEST_DATA = {
 }
 const NO_PRIMARY_KEY_EXPECT_DATA_SCATTERED = [ { '103': 3.1 }, { '107': 3.3 }, { '105': 3.5 } ]
 const NO_PRIMARY_KEY_EXPECT_DATA = [ { '103': 3.1, '107': 3.3 }, { '105': 3.5 } ]
+
+describe( "field utilities tests", () => {
+  var fieldBuilderUtilUnderTest;
+  beforeEach( () => {
+    fieldBuilderUtilUnderTest = new FieldUtil.FieldBuilder()
+  })
+  describe("build field info tests", () => {
+    it("load into existing dataset with subset of datarow fields", (done) => {
+      
+      let checkFieldData = fieldBuilderUtilUnderTest.buildFieldInfo(SAMPLE_ROWDATA, PARENT_DATASET_WITH_SUBSET_FIELDS)
+      assert.equal(checkFieldData.length, _.keys(SAMPLE_ROWDATA).length)
+      EXPECT_FIELDS_FROM_PARENT_HAVING_SUBSET.forEach( (expectedObj, index) => {
+        assert.ok(_.findWhere(checkFieldData, expectedObj), 'data contains expected obj ' + JSON.stringify(expectedObj) +
+         '  at index ' + index )
+      })
+      done()
+    })
+    it("load into existing dataset with super-set of datarow fields", (done) => {
+      
+      let checkFieldData = fieldBuilderUtilUnderTest.buildFieldInfo(SAMPLE_ROWDATA, PARENT_DATASET_WITH_SUPERSET_FIELDS)
+      assert.equal(checkFieldData.length, _.keys(SAMPLE_ROWDATA).length)
+      
+      done()
+    })
+
+  })
+
+})
+
+const SAMPLE_ROWDATA = { one: 'one', two: '20%', three: 3}
+
+const PARENT_DATASET_WITH_SUBSET_FIELDS = { name: 'parent-1', id: 1, 
+    fields: [ { name: 'one', id: 'f1', label: 'Une' }, { name: 'two', id: 'f2', label: 'Deux', type:  FieldUtil.STRING_TYPE}]
+    }
+const EXPECT_FIELDS_FROM_PARENT_HAVING_SUBSET = [ 
+  { name: 'one', id: 'f1', label: 'Une', type: FieldUtil.STRING_TYPE },
+  { name: 'two', id: 'f2', label: 'Deux', type:  FieldUtil.PERCENT_TYPE},
+  { name: 'three', label: 'Three', type: FieldUtil.INTEGER_TYPE },
+ ]
+
+ const PARENT_DATASET_WITH_SUPERSET_FIELDS = { name: 'parent-2', id: 2, 
+    fields: [ 
+      { name: 'one', id: 'f1', label: 'Une' }, 
+      { name: 'two', id: 'f2', label: 'Deux', type:  FieldUtil.STRING_TYPE}, 
+      { name: 'three', id: 'f3', label: 'Three', type: FieldUtil.INTEGER_TYPE },
+      { name: 'not_there', id: 'xx'},
+      ]
+    }

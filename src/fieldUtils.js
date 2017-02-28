@@ -43,6 +43,12 @@ export class FieldBuilder {
         }
         
       }
+    } else if (typeof(val) == 'number') {
+      if ( val == Math.floor(val)) {
+          type = INTEGER_TYPE
+        } else {
+          type = DECIMAL_TYPE
+        }
     }
     if ( type != PERCENT_TYPE && 
       ((-1 < name.toLowerCase().indexOf('percent')) || (-1 < name.indexOf('%'))) ) {
@@ -56,13 +62,18 @@ export class FieldBuilder {
    * Based on supplied data row, build array of field info objects
    * which include a unique field-id for each property on the row.
    * @param  {datarow} sample representative row of data
+   * @param { DataSet} dataset parent DataSet
    * @return { array of object}        intial properties for each field
    */
-  buildFieldInfo(sample) {
+  buildFieldInfo(sample, dataset) {
     let fields = new Array()
     _.each(_.keys(sample), (key,index) => {
       let type = this.guessType(sample[key], key)
-      if (! _.contains(["id", "dataset", "createdAt", "updatedAt"], key)) {
+      let currField = _.findWhere(dataset.fields, {name: key})
+      if (currField) {
+        currField.type = type
+        fields.push(currField)
+      } else if (! _.contains(["id", "dataset", "createdAt", "updatedAt"], key)) {
         let fieldObj = _.clone(FIELD_DEFAULTS)
         fieldObj.name = key
         fieldObj.id = this._generateUniqueId()
