@@ -121,39 +121,44 @@ export default class DataSetAdmin extends AdminController {
    * 
    */
   _uploadDataRowSave(req, res) {
-    let setId = req.param('id')
+    let setId = req.params['id']
     this.log.debug("_uploadDataRowSave setId ", setId)
+    let rowCount = 0
     return Promise.resolve().then( () => {
       if(!req.file) {
         throw new Error('No upload file was supplied for the data')
       }
       return this.models['datasets-datarow'].destroy({dataset: setId}) 
     }).then( () => {
-      return dataManager.importFileToModel('datasets-datarow', req.file.path, {type: 'csv', truncate: false, strict: false})
-    }).then((rows) => {
+      return([
+        dataManager.importFileToModel('datasets-datarow', req.file.path, {type: 'csv', truncate: false, strict: false}),
+        this.model.findOne(setId)
+        ])
+    }).spread( (rows, parentDataSet) => {
       let currentFields = []
       _.each(rows, (rowElem, index) => {
         // this.log.debug("saveDataUpload " + index + " processing rowElem", rowElem)
         if (Array.isArray(rowElem)) {
           rowElem = rowElem[0] //work-around for model handler dupe bug in data-loader 3.0.0 (do we need this in 4.0??)
         }
-        if (_.isEmpty(currentFields)) {
-          currentFields = this._fieldBuilder.buildFieldInfo(rowElem)
+        if (0 == index) {
+          currentFields = this._fieldBuilder.buildFieldInfo(rowElem, parentDataSet)
         }
         let rowToUpdate = this._prepareDataRowInDataSet(rowElem, setId)
-        rowToUpdate.save().catch((err) => {
-          this.log.error("nxus-dataset update failed for datarow " + rowElem.id, err)
-        })
+        if (rowToUpdate) {
+          rowCount++
+          rowToUpdate.save().catch((err) => {
+            this.log.error("nxus-dataset update failed for datarow " + rowElem.id, err)
+          })
+        }
       })
-      return this.model.findOne(setId).then((set) => {
-        set.rowCount = rows.length
-        set.fields = currentFields
-        this.log.debug( "nxus-dataset saveDataUpload dataset " + setId + " fields:", currentFields )
-        return set.save().then( () => {
-          req.flash('info', "Successfully loaded " + rows.length + " data rows")
-          res.redirect(this.routePrefix + '/edit/' + set.id)
-        })
-      })
+      parentDataSet.rowCount = rowCount
+      parentDataSet.fields = currentFields
+      this.log.debug( "nxus-dataset saveDataUpload dataset " + setId + " fields:", currentFields )
+      return parentDataSet.save()
+    }).then( () => {
+        req.flash('info', "Successfully loaded " + rowCount + " data rows")
+        res.redirect(this.routePrefix + '/edit/' + setId)
     }).catch((e) => {
       this.log.error( "nxus-dataset saveDataUpload() error loading data rows  ", e, " at: ", e.stack);
       req.flash('error', "Error processing rows: " + e)
