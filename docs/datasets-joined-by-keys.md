@@ -30,14 +30,17 @@ Consider the following 2 DataSets, created with data uploaded using the admin in
     <tr>
       <th>fruit name</th>
       <th>count per 100#</th>
+      <th>number per box</th>
     </tr>
     <tr>
       <td>apple</td>
       <td>370</td>
+      <td>46</td>
     </tr>
     <tr>
       <td>orange</td>
       <td>290</td>
+      <td>39</td>
     </tr>
   </table>
 </figure>
@@ -98,6 +101,15 @@ if the presentation is named *Fruit Info* (and the only presentation so named) t
             "type":"integer",
             "dataset":"2"
          }
+         "dfe6ba52":{
+            "name":"number_per_box",
+            "id":"dfe6ba52",
+            "isPrimaryKey":false,
+            "isVisible":true,
+            "label":"Count Per 100#",
+            "type":"integer",
+            "dataset":"2"
+         }
       },
       "data":[
          {
@@ -114,11 +126,13 @@ if the presentation is named *Fruit Info* (and the only presentation so named) t
          },
          {
             "dfe6ba51":"370",
-            "dfe6ba50":"apple"
+            "dfe6ba50":"apple",
+            "dfe6ba52":"46"
          },
          {
             "dfe6ba51":"290",
-            "dfe6ba50":"orange"
+            "dfe6ba50":"orange",
+            "dfe6ba52":"39"
          }
       ]
    }
@@ -152,10 +166,12 @@ will transform the `data` property of `result2` and return `result2.data` value:
     "Fruit Name": "lemon"
   }, {
     "Count Per 100#": "370",
-    "Fruit Name": "apple"
+    "Fruit Name": "apple",
+    "Number Per Box:" : "46"
   }, {
     "Count Per 100#": "290",
-    "Fruit Name": "orange"
+    "Fruit Name": "orange",
+    "Number Per Box:" : "39"
   }]
 }
 </pre>
@@ -165,7 +181,7 @@ Note that if 2 fields in the presentation have the same `label` this transformat
 The other properties of `result2` remain unchanged from the original object returned by *loadPresentations*.
 
 Use the  dataPresentationUtil *indexPresentationDataByPrimaryKeyValue* method to transform the `data` property of a presentation
-into a single object, whose keys are the primary key values of the presentation's data sets. In the example above, this would be coded:
+into a single object, whose keys are the primary key values of the presentation's data sets. In the code example above, this would be:
 
         return { result2: dataPresentationUtil.indexPresentationDataByPrimaryKeyValue(presentationArr[0]) }
 
@@ -179,13 +195,15 @@ and returns in `result2.data` like this:
       "993d6ef0": "red",
       "993d47e0": "apple",
       "dfe6ba51": "370",
-      "dfe6ba50": "apple"
+      "dfe6ba50": "apple",
+      "dfe6ba52": "46"
     },
     "orange": {
       "993d6ef0": "orange",
       "993d47e0": "orange",
       "dfe6ba51": "290",
-      "dfe6ba50": "orange"
+      "dfe6ba50": "orange",
+      "dfe6ba52": "39"
     },
     "lemon": {
       "993d6ef0": "yellow",
