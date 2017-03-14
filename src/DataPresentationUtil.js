@@ -37,6 +37,7 @@ export default class DataPresentationUtil {
       name: presentation.name, 
       id: presentation.id, 
       label: presentation.label, 
+      subheading: presentation.subheading,
       fields: this.createFieldsIndexedById(presentation.fields, datasets, datarows), 
       data: this.createDataRowsForFields(_.pluck(presentation.fields, "id"), datasets, datarows)
     }
