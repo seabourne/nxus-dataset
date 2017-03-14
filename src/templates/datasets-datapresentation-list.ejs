@@ -20,12 +20,12 @@
           <% attributes.forEach(function(attr) { %>
             <% if(attr.isTitle) { %>
               <td><a href="<%=instanceUrl%>/<%=u[idField]%>"><%if (u[attr.name]) { %><%=u[attr.name]%><% } else { %>[empty]<%}%></a></td>
-            <% } else if (attr.name == 'fieldIds') { %>
+            <% } else if (attr.name == 'fields') { %>
             <td>
             <%    if (u[attr.name]) {
-                    u[attr.name].forEach( (fieldId) => {
+                    u[attr.name].forEach( (field) => {
                       let currField = null
-                      let matchedDataSet = _.find(datasets, (dataset) => { return ( currField = _.findWhere(dataset.fields, {id: fieldId}) ) })
+                      let matchedDataSet = _.find(datasets, (dataset) => { return ( currField = _.findWhere(dataset.fields, {id: field.id}) ) })
                       if (matchedDataSet && currField) {  %>
                       <%- matchedDataSet.name %>:&nbsp;<%- currField.name %><br/>
             <%        } else { %>

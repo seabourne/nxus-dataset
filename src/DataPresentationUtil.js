@@ -37,8 +37,8 @@ export default class DataPresentationUtil {
       name: presentation.name, 
       id: presentation.id, 
       label: presentation.label, 
-      fields: this.createFieldsIndexedById(presentation.fieldIds, datasets, datarows), 
-      data: this.createDataRowsForFields(presentation.fieldIds, datasets, datarows)
+      fields: this.createFieldsIndexedById(presentation.fields, datasets, datarows), 
+      data: this.createDataRowsForFields(_.pluck(presentation.fields, "id"), datasets, datarows)
     }
     return presentationData
   }
@@ -47,7 +47,7 @@ export default class DataPresentationUtil {
   /**
    * Create list of data objects, with properties set to the field-id's to prevent naming conflicts.
    * The returned data will include just these field values, along with any fields marked isPrimaryKey=true
-   * @param  {Array} fieldIdList the field-id values to filter from supplied datasets & datarows
+   * @param  {Array} fieldIdList array of field id values to filter from supplied datasets & datarows
    * @param  {Array} datasets    DataSet objects, containing a 'fields' property which holds field object
    * @param  {[type]} datarows   DataRow objects to filter
    * @return {Array}             Transformed DataRow objects, with properties set to the field-id's.
@@ -86,9 +86,9 @@ export default class DataPresentationUtil {
   }
 
   /**
-   * Pull field info for fields matching the field-id's in the supplied fieldIdList,
+   * Pull field info for fields matching the field-id's in the supplied presentation fields,
    * and reformat into an object indexed by those field-id's.
-   * @param  {Array} fieldIdList the field-id's to select
+   * @param  {Array} presentFields the fields included in the presentation, with `id` and optional `label` properties
    * @param  {Array} datasets    array of DataSet objects holding fields, with name, id, etc.
    * @param  {Array} datarows    
    * @return {Object}            field information from DataSet, indexed by field-id. Each field-id holds
@@ -101,13 +101,18 @@ export default class DataPresentationUtil {
    *  -  `isVisible` boolean hint to display pages whether to show this in rendered data listings
    *  -  `dataset` ID of the DataSet for this field
    */
-  createFieldsIndexedById(fieldIdList, datasets, datarows) {
+  createFieldsIndexedById(presentFields, datasets, datarows) {
     let fieldsObj = {}
     let matchedDataSetFields = []
+    let selectedFieldIds = _.pluck(presentFields, "id")
     datasets.forEach( (dataset) => {
       let dsMatched = _.map(dataset.fields, (dsFieldObj) => {
-        if (fieldIdList.includes(dsFieldObj.id) || dsFieldObj.isPrimaryKey)
-          return _.extend(_.clone(dsFieldObj), {dataset: dataset.id})
+        let pField = _.findWhere(presentFields, {id: dsFieldObj.id})
+        if (pField || dsFieldObj.isPrimaryKey) {
+          let fObj = _.extend(_.clone(dsFieldObj), {dataset: dataset.id})
+          if (pField && pField.label) fObj.label = pField.label
+          return fObj
+        }
       })
       matchedDataSetFields = matchedDataSetFields.concat(dsMatched)
     })

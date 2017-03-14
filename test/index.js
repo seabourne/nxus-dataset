@@ -40,6 +40,11 @@ describe( "Data Util Methods ", () => {
       PRIMARY_KEY_EXPECT_DATA.forEach( (expectedObj, index) => {
         assert.ok(_.findWhere(checkData.data, expectedObj), 'pk data contains expected obj at index ' + index )
       })
+      assert.equal(_.keys(checkData.fields).length, _.keys(PRIMARY_KEY_EXPECT_FIELDS).length, 'got expected PK fields length OK')
+      _.keys(PRIMARY_KEY_EXPECT_FIELDS).forEach( (expectFieldId, index) => {
+        assert.equal(PRIMARY_KEY_EXPECT_FIELDS[expectFieldId].name, checkData.fields[expectFieldId].name, "field name matches OK at " + expectFieldId)
+        assert.equal(PRIMARY_KEY_EXPECT_FIELDS[expectFieldId].label, checkData.fields[expectFieldId].label, "field label matches OK at " + expectFieldId)
+      })
       done()
     })
     it("data-presentation index by single PK field", (done) => {
@@ -155,16 +160,23 @@ const TEST_DATA_WITH_PRIMARY_KEY = {
   ],
   testPresentation: {
     name: 'test2', id: '888', label: 'testing2', 
-    fieldIds:[ '104', '105', '106']
+    fields:[ {id:'104', label: 'p104'}, {id:'105', label: 'p105'}, {id:'106'}]
   }
 }
 const PRIMARY_KEY_EXPECT_DATA_SCATTERED = [ { '104': 3.2, '1001': 999 }, { '104': 2.6, '1001': 998 }, { '105': 1.7, '1002': 997 }, { '106': 1.8, '1002': 997 } ] 
 const PRIMARY_KEY_EXPECT_DATA = [ { '104': 3.2, '1001': 999 }, { '104': 2.6, '1001': 998 }, { '105': 1.7, '106': 1.8, '1002': 997 } ] 
+const PRIMARY_KEY_EXPECT_FIELDS = { 
+        '104': {id:'104', label: 'p104', name: 'that', dataset: 123},
+        '105': {name: 'another', label: 'p105', id: '105', dataset: 124},
+        '106': {name: 'yetanother', label: 'yet-another', id: '106', dataset: 124},
+        '1002': {name: 'pk1', label: 'pk2', id: '1002', isPrimaryKey: true, dataset: 124},
+        '1001': {name: 'pk1', label: 'pk1', id: '1001', isPrimaryKey: true, dataset: 123}
+      }
  
 const INDEXED_PRIMARY_KEY_EXPECT_DATA = { '999': {'104': 3.2, '1001': 999}, '998': {'104': 2.6, '1001': 998}, '997': { '105': 1.7, '106': 1.8, '1002': 997 } }
 const INDEXED_PRIMARY_KEY_EXPECT_DATA_SCATTERED = INDEXED_PRIMARY_KEY_EXPECT_DATA
-const FIELD_LABELS_PRIMARY_KEY_EXPECT_DATA = [ { 'thatsit': 3.2, 'pk1': 999 }, { 'thatsit': 2.6, 'pk1': 998 }, { 'another': 1.7, 'yet-another': 1.8, 'pk2': 997 } ] 
-const FIELD_LABELS_PRIMARY_KEY_EXPECT_DATA_SCATTERED = [ { 'thatsit': 3.2, 'pk1': 999 }, { 'thatsit': 2.6, 'pk1': 998 }, { 'another': 1.7, 'pk2': 997 }, { 'yet-another': 1.8, 'pk2': 997 } ] 
+const FIELD_LABELS_PRIMARY_KEY_EXPECT_DATA = [ { 'p104': 3.2, 'pk1': 999 }, { 'p104': 2.6, 'pk1': 998 }, { 'p105': 1.7, 'yet-another': 1.8, 'pk2': 997 } ] 
+const FIELD_LABELS_PRIMARY_KEY_EXPECT_DATA_SCATTERED = [ { 'p104': 3.2, 'pk1': 999 }, { 'p104': 2.6, 'pk1': 998 }, { 'p105': 1.7, 'pk2': 997 }, { 'yet-another': 1.8, 'pk2': 997 } ] 
 
 const NO_PRIMARY_KEY_TEST_DATA = {
   testSets: [ 
@@ -178,7 +190,7 @@ const NO_PRIMARY_KEY_TEST_DATA = {
   ],
   testPresentation: {
     name: 'test', id: '888', label: 'testing', 
-    fieldIds:['103', '105', '107']
+    fields:[{id:'103'}, {id:'105'}, {id:'107'}]
   }
 }
 const NO_PRIMARY_KEY_EXPECT_DATA_SCATTERED = [ { '103': 3.1 }, { '107': 3.3 }, { '105': 3.5 } ]
