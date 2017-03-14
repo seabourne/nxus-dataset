@@ -40,6 +40,9 @@ const DATAROW_MODEL_DEFAULT = 'datasets-datarow'
  * ## Usage & Examples
  *  *  [Usage](docs/usage.md)
  *  *  [Examples](docs/datasets-joined-by-keys.md)
+ *
+ * ## Release Notes
+ *  * [releases](docs/releases.md)
  */
 class DataSets extends MVCModule {
   constructor (opts={}) {
