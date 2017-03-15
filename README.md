@@ -2,7 +2,7 @@
 
 ## DataSets
 
-[src/index.js:47-142](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/index.js#L47-L142 "Source code on GitHub")
+[src/index.js:47-142](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/index.js#L47-L142 "Source code on GitHub")
 
 **Extends MVCModule**
 
@@ -49,7 +49,7 @@ see [@module:./DataPresentationUtil#extractDataForPresentation](@module:./DataPr
 
 ### loadPresentations
 
-[src/index.js:64-85](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/index.js#L64-L85 "Source code on GitHub")
+[src/index.js:64-85](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/index.js#L64-L85 "Source code on GitHub")
 
 Gather DataPresentation objects returned by the given query,
 returning normalized data for each in an arry
@@ -65,7 +65,7 @@ returned in the format provided by [@module:./DataPresentationUtil#extractDataFo
 
 ### loadPresentationByName
 
-[src/index.js:93-95](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/index.js#L93-L95 "Source code on GitHub")
+[src/index.js:93-95](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/index.js#L93-L95 "Source code on GitHub")
 
 Convenience method to load a presentation by name.
 
@@ -76,7 +76,7 @@ Convenience method to load a presentation by name.
 
 ### loadFields
 
-[src/index.js:103-119](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/index.js#L103-L119 "Source code on GitHub")
+[src/index.js:103-119](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/index.js#L103-L119 "Source code on GitHub")
 
 Load data for the supplied list of fields. If 'rowKeyValues' is supplied then limit returned data to 
 primary key rows with that value or values.
@@ -91,7 +91,7 @@ Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 ## FieldBuilder
 
-[src/fieldUtils.js:24-92](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/fieldUtils.js#L24-L92 "Source code on GitHub")
+[src/fieldUtils.js:24-92](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/fieldUtils.js#L24-L92 "Source code on GitHub")
 
 Class to encapsulate some 
 rules about how DataSet fields are 
@@ -99,7 +99,7 @@ structured and typed.
 
 ## DataPresentationUtil
 
-[src/DataPresentationUtil.js:14-215](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/DataPresentationUtil.js#L14-L215 "Source code on GitHub")
+[src/DataPresentationUtil.js:14-216](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/DataPresentationUtil.js#L14-L216 "Source code on GitHub")
 
 Utility methods for extracting and formatting data returned by raw queries,
 and for converting between various representations of that data.
@@ -113,7 +113,7 @@ and for converting between various representations of that data.
 
 ### extractDataForPresentation
 
-[src/DataPresentationUtil.js:35-44](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/DataPresentationUtil.js#L35-L44 "Source code on GitHub")
+[src/DataPresentationUtil.js:35-45](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/DataPresentationUtil.js#L35-L45 "Source code on GitHub")
 
 Extract data relevant to the DataPresentation from collections of DataSet's and DataRow's.
 Creates a normalized DataPresentation data-object, with header info from the presentation and all matching DataRows trimmed to just the fields needed.
@@ -134,7 +134,7 @@ Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 ### createDataRowsForFields
 
-[src/DataPresentationUtil.js:55-86](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/DataPresentationUtil.js#L55-L86 "Source code on GitHub")
+[src/DataPresentationUtil.js:56-87](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/DataPresentationUtil.js#L56-L87 "Source code on GitHub")
 
 Create list of data objects, with properties set to the field-id's to prevent naming conflicts.
 The returned data will include just these field values, along with any fields marked isPrimaryKey=true
@@ -149,7 +149,7 @@ Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refere
 
 ### createFieldsIndexedById
 
-[src/DataPresentationUtil.js:104-124](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/DataPresentationUtil.js#L104-L124 "Source code on GitHub")
+[src/DataPresentationUtil.js:105-125](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/DataPresentationUtil.js#L105-L125 "Source code on GitHub")
 
 Pull field info for fields matching the field-id's in the supplied presentation fields,
 and reformat into an object indexed by those field-id's.
@@ -171,7 +171,7 @@ an object with properties:-   `name` the original column name uploaded into the 
 
 ### formatPresentationDataByFieldLabel
 
-[src/DataPresentationUtil.js:133-139](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/DataPresentationUtil.js#L133-L139 "Source code on GitHub")
+[src/DataPresentationUtil.js:134-140](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/DataPresentationUtil.js#L134-L140 "Source code on GitHub")
 
 reformat array of presentationData objects
 
@@ -185,7 +185,7 @@ Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refere
 
 ### formatDataWithFieldLabel
 
-[src/DataPresentationUtil.js:147-167](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/DataPresentationUtil.js#L147-L167 "Source code on GitHub")
+[src/DataPresentationUtil.js:148-168](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/DataPresentationUtil.js#L148-L168 "Source code on GitHub")
 
 reformat presentationData.data
 
@@ -198,7 +198,7 @@ Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 ### indexPresentationDataByPrimaryKeyValue
 
-[src/DataPresentationUtil.js:174-180](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/DataPresentationUtil.js#L174-L180 "Source code on GitHub")
+[src/DataPresentationUtil.js:175-181](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/DataPresentationUtil.js#L175-L181 "Source code on GitHub")
 
 reformat array of presentation data using indexDataIntoObjectByPrimaryKeyValue()
 
@@ -210,7 +210,7 @@ Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refere
 
 ### indexDataIntoObjectByPrimaryKeyValue
 
-[src/DataPresentationUtil.js:189-214](https://github.com/seabourne/nxus-dataset/blob/5e493bb66fc882d011cad5273c7f9f8cebdedd09/src/DataPresentationUtil.js#L189-L214 "Source code on GitHub")
+[src/DataPresentationUtil.js:190-215](https://github.com/seabourne/nxus-dataset/blob/e9231e5db139b38f7e50e134d46085dc7f36dcf8/src/DataPresentationUtil.js#L190-L215 "Source code on GitHub")
 
 reformat the 'data' rows in the supplied presentation data into a single
 object with properties set to the value of primary key field in each row.
