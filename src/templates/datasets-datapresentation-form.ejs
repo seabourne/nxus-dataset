@@ -15,24 +15,44 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 to-right" for="control_fieldIds">Fields</label>
+            <label class="col-sm-3 to-right" for="control_subheading">Sub Heading</label>
             <div class="col-sm-7">
-                <select id="control_fieldIds" class="form-control" name="fieldIds" size='15' multiple>
+                <input type="text" id="control_subheading" class="form-control" value="<%= object.subheading %>" placeholder="Enter Sub Heading" name="subheading" >
+            </div>
+        </div>
+        <h4>Select Fields for this Presentation:</h4>
+        <div style="height: 25em; border: 1px solid black;">
+            <div class="form-inline" style="overflow: auto; height: 25em;">
+                    
             <%  if (locals.datasets) {
                     datasets.forEach( (dataset) => {
                         if (dataset.fields) {
                             dataset.fields.forEach( (field) => {
-                                let selected = ( _.contains(object.fieldIds, field.id) ? "selected" : "" )
+                                let selected = ( _.contains(_.pluck(object.fields, "id"), field.id) ? "checked" : "" )
+                                let fieldLabelDisabled = (selected ? "" : "disabled='disabled'")
+                                let objField = _.findWhere(object.fields, {id: field.id})
+                                let fieldLabel = dataset.name + ": " + field.label
+                                if (objField && objField.label) fieldLabel = objField.label
+
 
             %>
-                    <option value="<%= field.id %>" <%= selected %> ><%=dataset.name + ": " + field.name %></option>       
+            <div class="form-group col-md-6">
+                <div class="checkbox">
+                    <label>
+                    <input type="checkbox" name="fieldIds" value="<%= field.id %>" <%= selected %> onclick="toggleFieldName(this, '<%= field.id %>')"/> <%=dataset.name + ": " + field.name %>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="fieldLabel<%= field.id %>">Field Label:</label>
+                <input type="text" class="form-control" id="fieldLabel<%= field.id %>" name="fieldLabel<%= field.id %>" value="<%= fieldLabel %>" <%= fieldLabelDisabled%>/>
+            </div>
             <%              })
                         }
                 
                    })
                 }
             %>
-                </select>
             </div>
         </div>
     </div>
@@ -43,3 +63,13 @@
     </div>
 
 </form>
+
+<script type="text/javascript">
+function toggleFieldName(checkboxElem, fieldId) {
+    if (checkboxElem.checked) {
+        $("#fieldLabel" + fieldId).get(0).disabled = false;
+    } else {
+        $("#fieldLabel" + fieldId).get(0).disabled = true;
+    }
+}
+</script>

@@ -22,7 +22,7 @@ export default class DataPresentationAdmin extends AdminController {
       paginationOptions:  {
         sortField: 'name',
         sortDirection: 'ASC',
-        itemsPerPage: 10,
+        itemsPerPage: 15,
       },
       ...opts
     })
@@ -74,7 +74,8 @@ export default class DataPresentationAdmin extends AdminController {
   }
 
   /**
-   * Implements save for a DataPresentation, from custom form.
+   * Implements save for a DataPresentation, 
+   * from "datasets-datapresentation-form".
    * Redirects to the proper page depending on outcome.
    * @param  {Request} req   
    * @param  {Response} res  
@@ -84,7 +85,16 @@ export default class DataPresentationAdmin extends AdminController {
     let updatedObj = { 
       name: req.body.name, 
       label: req.body.label, 
-      fieldIds: req.body.fieldIds
+      subheading: req.body.subheading,
+      fields: [],
+    }
+    if (req.body.fieldIds) {
+      let fieldsArr = []
+      req.body.fieldIds.forEach( (ident) => {
+        let field = { id: ident, label: req.body['fieldLabel' + ident]}
+        fieldsArr.push(field)
+      })
+      updatedObj.fields = fieldsArr
     }
     this.log.debug('save presentation id: ', presentId)
     return Promise.resolve().then( () => {
@@ -104,7 +114,7 @@ export default class DataPresentationAdmin extends AdminController {
 
   /**
    * Set up the create-new form for DataPresenation.
-   * Loads `peerModelIdentity` objects for use in a pick-list of fieldId's.
+   * Loads `peerModelIdentity` objects for use in a pick-list of field Id's.
    * @param  {[type]} req    [description]
    * @param  {[type]} res    [description]
    * @param  {[type]} object [description]

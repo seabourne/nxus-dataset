@@ -7,13 +7,10 @@ var DataPresentation = BaseModel.extend({
   identity: 'datasets-datapresentation',
   attributes: {
     name: 'string',
-    fieldIds: {
-      type: 'array',
-      defaultsTo: []
-    },
-    label: 'string'
+    fields: 'json',
+    label: 'string',
+    subheading: 'string',
   }
 });
-
 
 module.exports = DataPresentation;

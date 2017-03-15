@@ -11,7 +11,7 @@ export default class DataPresentationView extends ViewController {
     super({
      modelIdentity: 'datasets-datapresentation',
       displayName: 'Data for Presentation',
-      ignoreFields: ['id', 'createdAt', 'updatedAt', 'fieldIds'],
+      ignoreFields: ['id', 'createdAt', 'updatedAt', 'fields'],
       paginationOptions:  {
         sortField: 'name',
         sortDirection: 'ASC',

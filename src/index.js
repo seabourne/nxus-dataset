@@ -40,6 +40,9 @@ const DATAROW_MODEL_DEFAULT = 'datasets-datarow'
  * ## Usage & Examples
  *  *  [Usage](docs/usage.md)
  *  *  [Examples](docs/datasets-joined-by-keys.md)
+ *
+ * ## Release Notes
+ *  * [releases](docs/releases.md)
  */
 class DataSets extends MVCModule {
   constructor (opts={}) {
@@ -61,8 +64,8 @@ class DataSets extends MVCModule {
   loadPresentations(query, rowKeyValues, queryOptions) {
     return this.models['datasets-datapresentation'].find(query)
     .then( (presentations) => {
-      let allPresentationsFieldIds = _.flatten(_.pluck(presentations, 'fieldIds'))
-      return([presentations, this.models[this.dataSetModel].find({'fields.id': allPresentationsFieldIds})])
+      let allPresentationsFieldsIds = _.pluck(_.flatten(_.pluck(presentations, 'fields')), 'id')
+      return([presentations, this.models[this.dataSetModel].find({'fields.id': allPresentationsFieldsIds})])
     }).spread( (presentations, dataSets) => {
       if (!dataSets) return ([presentations, dataSets, []])
       let rowQuery = this._buildRowQuery(dataSets, rowKeyValues)
