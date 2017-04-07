@@ -16,6 +16,42 @@ describe( "Data Util Methods ", () => {
   })
 
   describe("DataPresentation", () => {
+    it("primitive values check in extracted presentation", (done) => {
+      let checkData = utilsUnderTest.extractDataForPresentation(NO_PRIMARY_KEY_TEST_DATA.testPresentation, 
+        NO_PRIMARY_KEY_TEST_DATA.testSets, 
+        NO_PRIMARY_KEY_TEST_DATA.testRows)
+      
+      _.each(checkData, (value, key) => {
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+          assert.equal(checkData[key], NO_PRIMARY_KEY_TEST_DATA.testPresentation[key], 'matched presentation at ' + key)
+        }
+      })
+      done()
+    })
+    it("primitive values check in field-label transformed presentation", (done) => {
+      let presentation = utilsUnderTest.extractDataForPresentation(NO_PRIMARY_KEY_TEST_DATA.testPresentation, 
+        NO_PRIMARY_KEY_TEST_DATA.testSets, 
+        NO_PRIMARY_KEY_TEST_DATA.testRows)
+      let checkData = utilsUnderTest.formatPresentationDataByFieldLabel(presentation)
+      _.each(checkData, (value, key) => {
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+          assert.equal(checkData[key], NO_PRIMARY_KEY_TEST_DATA.testPresentation[key], 'matched presentation at ' + key)
+        }
+      })
+      done()
+    })
+    it("primitive values check in primary key value transformed presentation", (done) => {
+      let presentation = utilsUnderTest.extractDataForPresentation(TEST_DATA_WITH_PRIMARY_KEY.testPresentation, 
+        TEST_DATA_WITH_PRIMARY_KEY.testSets, 
+        TEST_DATA_WITH_PRIMARY_KEY.testRows)
+      let checkData = utilsUnderTest.formatPresentationDataByFieldLabel(presentation)
+      _.each(checkData, (value, key) => {
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+          assert.equal(checkData[key], TEST_DATA_WITH_PRIMARY_KEY.testPresentation[key], 'matched presentation at ' + key)
+        }
+      })
+      done()
+    })
     it("extractDataForPresentation data check; dataset and datarow without PK", (done) => {
       
       let checkData = utilsUnderTest.extractDataForPresentation(NO_PRIMARY_KEY_TEST_DATA.testPresentation, 
@@ -159,7 +195,7 @@ const TEST_DATA_WITH_PRIMARY_KEY = {
     {pk1: 997, another: 1.7, yetanother: 1.8, id: 3, dataset: 124},
   ],
   testPresentation: {
-    name: 'test2', id: '888', label: 'testing2', 
+    name: 'test2', id: '888', label: 'testing2', subheading: 'with primary key',
     fields:[ {id:'104', label: 'p104'}, {id:'105', label: 'p105'}, {id:'106'}]
   }
 }
@@ -189,7 +225,7 @@ const NO_PRIMARY_KEY_TEST_DATA = {
     {flack1: 0.7, flack2: 0.6, id: 3, dataset: 123},
   ],
   testPresentation: {
-    name: 'test', id: '888', label: 'testing', 
+    name: 'test', id: '888', label: 'testing', subheading: "doesn't have primary keys",
     fields:[{id:'103'}, {id:'105'}, {id:'107'}]
   }
 }
