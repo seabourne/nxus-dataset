@@ -59,14 +59,25 @@
                     <input type="checkbox" class="form-check-input" name="field.<%- key %>.<%- field.id %>" id="object.field[<%- k %>].<%- key %>" value="true" <%= bchecked %> />
         <%        } else if ('type' == key) {
         %>
-                    <select name="field.<%- key %>.<%- field.id %>" class="form-control"  id="object.field[<%- k %>].<%- key %>">
+                    <select name="field.<%- key %>.<%- field.id %>" class="form-control" onchange="checkForType(this, '<%- field.id %>', '<%- value %>')" id="object.field[<%- k %>].<%- key %>">
         <%            fieldTypes.forEach( (fieldType) => {
         %>
                       <option value="<%- fieldType %>" <%= (fieldType == value ? "selected" : "") %>><%= fieldType %></option>
         <%            })
         %>
                     </select>
-        <%        } else {
+        <%        } else if ('annotates' == key) {
+        %>
+                    <select name="field.<%- key %>.<%- field.id %>" class="form-control"  id="object.field[<%- k %>].<%- key %>">
+        <%            object.fields.forEach( (innerField) => { 
+        %>
+                      <option value="<%- innerField.id %>" <%= (innerField.id == value ? "selected" : "") %>><%= innerField.name %></option>
+        <%            })
+        %>
+
+                    </select>
+
+        <%         } else {
         %>
                     <input type="text" class="form-control" name="field.<%- key %>.<%- field.id %>" id="object.field[<%- k %>].<%- key %>" value="<%- value %>" />
         <%        }

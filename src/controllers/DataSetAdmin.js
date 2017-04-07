@@ -1,5 +1,6 @@
 import {AdminController, admin} from 'nxus-admin'
 import {templater} from 'nxus-templater'
+import {clientjs} from 'nxus-clientjs'
 import {actions} from 'nxus-web'
 import {router} from 'nxus-router'
 import {dataManager} from 'nxus-data-manager'
@@ -33,6 +34,8 @@ export default class DataSetAdmin extends AdminController {
     this._fieldBuilder = new FieldUtil.FieldBuilder()
     //custom datasets edit form template
     templater.replace().template(__dirname+'/../templates/datasets-dataset-form.ejs', this.pageTemplate, this.templatePrefix+"-edit")
+    // clientjs.bundle('/my/local/file.js', '/browser/path/to/file.js')
+    clientjs.includeScript('datasets-dataset-form', __dirname+"/../js/datasets_form.js")
     //action and route registered for uploading associated DataRow's for a DataSet
     actions.add(this.templatePrefix + "-list", "Upload", "/upload-datarow/", {
       icon: "fa fa-upload",
