@@ -1,5 +1,5 @@
 // ..js/datasets_form.js
-import * as FieldUtil from '../../fieldUtils'
+import * as FieldUtil from '../fieldUtils'
 
 
 'use strict';
