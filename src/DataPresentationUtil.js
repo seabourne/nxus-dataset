@@ -146,12 +146,7 @@ export default class DataPresentationUtil {
    *   transformed into rows with property keys set to the field label.
    */
   formatDataWithFieldLabel(presentationData) {
-    let formattedObj = { 
-      name: presentationData.name, 
-      id: presentationData.id, 
-      label: presentationData.label,
-      fields: presentationData.fields
-    }
+    let formattedObj = _.omit(presentationData, 'data')
     let byNameData = []
     if (presentationData.data) {
       presentationData.data.forEach( (dataRow) => {
@@ -189,12 +184,7 @@ export default class DataPresentationUtil {
    */
   indexDataIntoObjectByPrimaryKeyValue(presentationData) {
     //group records by the value of given field-id
-    let formattedObj = { 
-      name: presentationData.name, 
-      id: presentationData.id, 
-      label: presentationData.label,
-      fields: presentationData.fields
-    }
+    let formattedObj = _.omit(presentationData, 'data')
     let primaryKeyFieldIds = []
     _.each(presentationData.fields, (value, key) => {
       if (_.isMatch(value, {isPrimaryKey: true})) primaryKeyFieldIds.push(key)
