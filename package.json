@@ -32,7 +32,7 @@
     "bluebird": "^3.3.3",
     "morph": "^0.2.0",
     "node-uuid": "^1.4.7",
-    "nxus-admin": "^4.0.0-6",
+    "nxus-admin": "^4.0.1-1",
     "nxus-data-manager": "^4.0.0-1",
     "nxus-router": "^4.0.0-1",
     "nxus-storage": "^4.0.0-2",
