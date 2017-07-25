@@ -1,5 +1,6 @@
 /*
- * tests for nxus-dataset
+ * tests for nxus-dataset 
+ * data formatting utils
  */
 'use strict';
 
