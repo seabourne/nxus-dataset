@@ -136,13 +136,18 @@ export default class DataSetAdmin extends AdminController {
         ])
     }).spread( (rows, parentDataSet) => {
       let currentFields = []
-      _.each(rows, (rowElem, index) => {
+      let sampleRow = {}
+      if (! rows ) {
+        throw new Error("No data in file")
+      }
+      rows.forEach( (rowElem, index) => {
         // this.log.debug("saveDataUpload " + index + " processing rowElem", rowElem)
         if (Array.isArray(rowElem)) {
           rowElem = rowElem[0] //work-around for model handler dupe bug in data-loader 3.0.0 (do we need this in 4.0??)
         }
-        if (0 == index) {
-          currentFields = this._fieldBuilder.buildFieldInfo(rowElem, parentDataSet)
+        sampleRow = _.extendOwn(sampleRow, rowElem)
+        if ((rows.length - 1) == index) {
+          currentFields = this._fieldBuilder.buildFieldInfo(sampleRow, parentDataSet)
         }
         let rowToUpdate = this._prepareDataRowInDataSet(rowElem, setId)
         if (rowToUpdate) {

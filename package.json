@@ -1,6 +1,6 @@
 {
   "name": "nxus-dataset",
-  "version": "4.0.1",
+  "version": "4.0.2-1",
   "description": "DataSet-DataRow data module ",
   "main": "lib",
   "scripts": {
@@ -32,26 +32,26 @@
     "bluebird": "^3.3.3",
     "morph": "^0.2.0",
     "node-uuid": "^1.4.7",
-    "nxus-admin": "^4.0.0-6",
+    "nxus-admin": "^4.0.1-1",
     "nxus-data-manager": "^4.0.0-1",
     "nxus-router": "^4.0.0-1",
     "nxus-storage": "^4.0.0-2",
     "nxus-templater": "^4.0.0-2",
-    "nxus-web": "^4.0.0-7",
+    "nxus-web": "^4.0.1-1",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "documentation": "^4.0.0-beta9",
-    "chai": "^3.4.1",
-    "chai-as-promised": "^5.1.0",
-    "mocha": "^2.2.5",
-    "should": "^7.0.2",
-    "sinon": "^1.17.2",
+    "babel-cli": "^6.9.0",
+    "babel-core": "^6.9.0",
     "babel-plugin-transform-function-bind": "^6.8.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
-    "babel-cli": "^6.9.0",
+    "chai": "^3.4.1",
+    "chai-as-promised": "^5.1.0",
+    "documentation": "^4.0.0-beta9",
+    "mocha": "^2.5.3",
     "sails-memory": "^0.10.7",
-    "babel-core": "^6.9.0"
+    "should": "^7.0.2",
+    "sinon": "^1.17.2"
   }
 }
