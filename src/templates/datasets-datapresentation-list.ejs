@@ -29,7 +29,7 @@
                       if (matchedDataSet && currField) {  %>
                       <%- matchedDataSet.name %>:&nbsp;<%- currField.name %><br/>
             <%        } else { %>
-                        <span class="label label-warning">!</span><span class="text-danger"><%- fieldId %> not found in available Data Sets</span><br/>
+                        <span class="label label-warning">!</span><span class="text-danger"><%- field.id %> not found in available Data Sets</span><br/>
             <%        }
                     })
                   } %>
